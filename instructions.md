@@ -176,9 +176,9 @@ chem_period_range
 
 Means are atomic-fraction weighted; ranges are max-minus-min over elements present; and
 
-\[
+$$
 H_{comp}=-\sum_e x_e\log x_e.
-\]
+$$
 
 Raw `formula` may not be used as an identity token, embedding, element one-hot vector, or lookup key.
 
@@ -209,19 +209,19 @@ They may first be read only after the structural model, geometry, quantization r
 
 ## Single-model requirement
 
-Define one fitted model \(M\) that provides both
+Define one fitted model $M$ that provides both
 
-\[
+$$
 d_G(a,b;M)
-\]
+$$
 
 and
 
-\[
+$$
 X\sim P_M(X\mid X_O=x_O),
-\]
+$$
 
-including unconditional generation \(X\sim P_M(X)\).
+including unconditional generation $X\sim P_M(X)$.
 
 A geometry model combined with an independently fitted imputation/generation model is an implementation failure.
 
@@ -278,27 +278,27 @@ A syntax/runtime bug may be fixed before outer data are read. Methodological cha
 
 ## Submitted geometry and conventional comparators
 
-The frozen model must induce one finite symmetric dissimilarity \(d_G(a,b)\ge0\) satisfying
+The frozen model must induce one finite symmetric dissimilarity $d_G(a,b)\ge0$ satisfying
 
-\[
+$$
 d_G(a,a)=0
-\]
+$$
 
 within `1e-12` and
 
-\[
+$$
 |d_G(a,b)-d_G(b,a)|\le10^{-10}.
-\]
+$$
 
-Construct standardized non-quantized Euclidean distance \(d_E\) from eligible numerical construction variables and the 12 chemistry summaries. Estimate standard deviations from the 50,000 training rows only:
+Construct standardized non-quantized Euclidean distance $d_E$ from eligible numerical construction variables and the 12 chemistry summaries. Estimate standard deviations from the 50,000 training rows only:
 
-\[
+$$
 d_E(a,b)=\sqrt{\frac{1}{|O_{ab}|}\sum_{j\in O_{ab}}\left(\frac{x_{aj}-x_{bj}}{\sigma_j}\right)^2}.
-\]
+$$
 
 Require at least 10 jointly observed numerical coordinates.
 
-Also compute a mixed Gower-style comparator \(d_M\) including `crys`, `dimensionality`, and `spg_number` as categorical variables. Mixed-distance and rank-correlation results are required diagnostics but are not strong-effect gates.
+Also compute a mixed Gower-style comparator $d_M$ including `crys`, `dimensionality`, and `spg_number` as categorical variables. Mixed-distance and rank-correlation results are required diagnostics but are not strong-effect gates.
 
 ---
 
@@ -322,9 +322,9 @@ eval_pos = eval_rng.choice(eligible_pos, size=3000, replace=False)
 
 Use exactly these 3,000 materials:
 
-\[
+$$
 \binom{3000}{2}=4,498,500
-\]
+$$
 
 unordered pairs.
 
@@ -332,11 +332,11 @@ unordered pairs.
 
 # TEST 1 — geometry novelty
 
-For each anchor \(a\), compute its 20 nearest neighbors under \(d_G,d_E,d_M\). Define
+For each anchor $a$, compute its 20 nearest neighbors under $d_G,d_E,d_M$. Define
 
-\[
+$$
 J^E_{20}(a)=\frac{|N^G_{20}(a)\cap N^E_{20}(a)|}{20}.
-\]
+$$
 
 Also report the corresponding mixed overlap and global/anchor-wise Spearman correlations.
 
@@ -346,9 +346,9 @@ Use 3,000 anchor-bootstrap replicates with seed `101002`.
 
 Require
 
-\[
+$$
 \boxed{CI^{upper}_{95}(\bar J^E_{20})<0.30}.
-\]
+$$
 
 **Why 0.30?** In the raw material space, dropping 10% of coordinates preserves about 84% of 20-neighbor structure, dropping 20% preserves about 74%, and even dropping 50% preserves about 44% on average. Across random 50%-coordinate perturbations, the 5th percentile of mean J20 is approximately `0.294`. Thus `<0.30` requires a reorganization stronger than approximately 95% of geometries produced even after discarding half of the measured raw-property representation.
 
@@ -360,41 +360,41 @@ Set `geometry_novel = YES` iff this gate and geometry validity checks pass.
 
 Standardize the eight blind transport variables using means and SDs estimated from the 50,000 training rows. Define
 
-\[
+$$
 d_F(a,b)=\sqrt{\frac18\sum_{k=1}^{8}(\widetilde Y_{ak}-\widetilde Y_{bk})^2}.
-\]
+$$
 
 Let
 
-\[
+$$
 e_{0.90}=Q_{0.90}(d_E)
-\]
+$$
 
 over eligible evaluation pairs. For each anchor define
 
-\[
+$$
 C_a=\{b:d_E(a,b)\ge e_{0.90}\},
-\]
+$$
 
 and retrieve
 
-\[
+$$
 b_G(a)=\arg\min_{b\in C_a}d_G(a,b).
-\]
+$$
 
-Select 20 distinct controls from \(C_a\), excluding \(b_G(a)\), whose \(d_E\) values are closest to that of the retrieved pair.
+Select 20 distinct controls from $C_a$, excluding $b_G(a)$, whose $d_E$ values are closest to that of the retrieved pair.
 
 Define
 
-\[
+$$
 R_{retrieval}=\frac{\operatorname{mean}_a d_F(a,b_G(a))}{\operatorname{mean}_a\operatorname{mean}_{c\in C_a^{match}}d_F(a,c)}
-\]
+$$
 
 and
 
-\[
+$$
 W=\frac1A\sum_a I\left[d_F(a,b_G(a))<\operatorname{mean}_{c\in C_a^{match}}d_F(a,c)\right].
-\]
+$$
 
 Use 3,000 anchor-bootstrap replicates with seed `101004`.
 
@@ -402,21 +402,21 @@ Use 3,000 anchor-bootstrap replicates with seed `101004`.
 
 Define
 
-\[
+$$
 G_{match}=\frac{\operatorname{mean}_a\frac1{20}\sum_{c\in C_a^{match}}|d_E(a,c)-d_E(a,b_G(a))|}{e_{0.90}}.
-\]
+$$
 
 Use 3,000 anchor-bootstrap replicates with seed `101005`. Require both
 
-\[
+$$
 G_{match}\le0.10
-\]
+$$
 
 and
 
-\[
+$$
 CI^{upper}_{95}(G_{match})<0.10.
-\]
+$$
 
 This is a validity control, not one of the five strong-effect gates.
 
@@ -424,21 +424,21 @@ This is a validity control, not one of the five strong-effect gates.
 
 Require
 
-\[
+$$
 \boxed{CI^{upper}_{95}(R_{retrieval})<0.70}.
-\]
+$$
 
-**Why 0.70?** Random retrieval among raw-distance-matched far materials gives \(R_{null}\approx0.995\), SD about `0.009`, and a 1st percentile around `0.976`; none of 3,000 raw-null experiments reached `0.70`. The gate therefore requires at least a 30% reduction in blind functional distance in a regime where ordinary random variation produces ratios near 1.
+**Why 0.70?** Random retrieval among raw-distance-matched far materials gives $R_{null}\approx0.995$, SD about `0.009`, and a 1st percentile around `0.976`; none of 3,000 raw-null experiments reached `0.70`. The gate therefore requires at least a 30% reduction in blind functional distance in a regime where ordinary random variation produces ratios near 1.
 
 ## Strong Gate 3 — retrieval consistency
 
 Require
 
-\[
+$$
 \boxed{CI^{lower}_{95}(W)>0.80}.
-\]
+$$
 
-**Why 0.80?** Raw-distance-matched random retrieval gives \(W_{null}\approx0.585\), with a 99th percentile around `0.604`; none of 3,000 null experiments reached `0.80`. The gate therefore requires improvement for at least four out of five materials with 95% confidence.
+**Why 0.80?** Raw-distance-matched random retrieval gives $W_{null}\approx0.585$, with a 99th percentile around `0.604`; none of 3,000 null experiments reached `0.80`. The gate therefore requires improvement for at least four out of five materials with 95% confidence.
 
 Set `retrieval_useful = YES` iff both strong retrieval gates and raw-distance matching validity pass.
 
@@ -469,9 +469,9 @@ before outer evaluation. On the supplied dataset the reference protocol yields a
 
 Construct
 
-\[
+$$
 P_{IND}(X)=\prod_j\widehat P_{train}(X_j)
-\]
+$$
 
 from the 50,000 training materials. For conditional completion, observed coordinates remain fixed and hidden coordinates are sampled independently from their training marginals. Use seed `314159`.
 
@@ -479,7 +479,7 @@ from the 50,000 training materials. For conditional completion, observed coordin
 
 # TEST 3 — unconditional generation
 
-Generate exactly `10,000` samples from \(P_M(X)\) with no material coordinates supplied, using seed `161803`.
+Generate exactly `10,000` samples from $P_M(X)$ with no material coordinates supplied, using seed `161803`.
 
 Write:
 
@@ -503,7 +503,7 @@ Set `blank_generation_valid = YES` iff all three conditions pass.
 
 # TEST 3B — cross-structure retention
 
-For every generation-panel coordinate \(j\), predict \(X_j\) from all other coordinates.
+For every generation-panel coordinate $j$, predict $X_j$ from all other coordinates.
 
 For numerical targets use exactly:
 
@@ -533,25 +533,25 @@ Fit preprocessing statistics and encoders from the real 50,000-row training set.
 
 Evaluate all three on the same real outer-held-out rows.
 
-For numerical targets use \(L_j=MAE_j/IQR_j^{train}\). For categorical targets use \(L_j=1-accuracy_j\).
+For numerical targets use $L_j=MAE_j/IQR_j^{train}$. For categorical targets use $L_j=1-accuracy_j$.
 
 A target is informative iff
 
-\[
+$$
 L_j^{REAL}\le0.95L_j^{IND}.
-\]
+$$
 
 For each informative target define
 
-\[
+$$
 g_j=\frac{L_j^{IND}-L_j^{GEN}}{L_j^{IND}-L_j^{REAL}},
-\]
+$$
 
 without clipping, and
 
-\[
+$$
 G=\frac1{|J|}\sum_{j\in J}g_j.
-\]
+$$
 
 Bootstrap outer-held-out verifier rows 2,000 times with seed `424242`, without refitting verifier models.
 
@@ -559,11 +559,11 @@ Bootstrap outer-held-out verifier rows 2,000 times with seed `424242`, without r
 
 Require
 
-\[
+$$
 \boxed{CI^{lower}_{95}(G)>0.70}.
-\]
+$$
 
-**Why 0.70?** \(G=0\) corresponds to independent-marginal structure and \(G\approx1\) to real-data-level recoverable structure. Raw-data degradation gives approximately `G=1.00` for a real joint resample, `0.88` after replacing 30% of rows by independent-marginal samples, and `0.80` after replacing 50%. A 0.70 lower-confidence floor is therefore conservative relative to severe deliberate destruction of the empirical joint structure while still requiring preservation of a substantial majority of recoverable cross-variable information.
+**Why 0.70?** $G=0$ corresponds to independent-marginal structure and $G\approx1$ to real-data-level recoverable structure. Raw-data degradation gives approximately `G=1.00` for a real joint resample, `0.88` after replacing 30% of rows by independent-marginal samples, and `0.80` after replacing 50%. A 0.70 lower-confidence floor is therefore conservative relative to severe deliberate destruction of the empirical joint structure while still requiring preservation of a substantial majority of recoverable cross-variable information.
 
 Set `cross_structure_preserved = YES` iff this gate passes.
 
@@ -585,23 +585,23 @@ For each masked row and masking level generate exactly 10 conditional completion
 
 For hidden numerical coordinates, use the median of the 10 generated values as the point completion. For hidden categorical coordinates, use the modal state, breaking ties lexicographically.
 
-For numerical coordinate \(j\):
+For numerical coordinate $j$:
 
-\[
+$$
 \ell_j=\frac{|\hat x_j-x_j|}{IQR_j^{train}}.
-\]
+$$
 
-For categorical coordinate \(j\):
+For categorical coordinate $j$:
 
-\[
+$$
 \ell_j=I(\hat x_j\ne x_j).
-\]
+$$
 
-Average first within coordinate across rows and then equally across coordinates. Let \(L_M(q)\) be submitted-model loss and \(L_{IND}(q)\) independent-marginal loss. Define
+Average first within coordinate across rows and then equally across coordinates. Let $L_M(q)$ be submitted-model loss and $L_{IND}(q)$ independent-marginal loss. Define
 
-\[
+$$
 R_C(q)=\frac{L_M(q)}{L_{IND}(q)}.
-\]
+$$
 
 Bootstrap completion rows 3,000 times with seed `577215`.
 
@@ -611,13 +611,13 @@ Report all three masking levels and coordinate-wise win fractions.
 
 Require
 
-\[
+$$
 \boxed{CI^{upper}_{95}(R_C(0.20))<0.50}.
-\]
+$$
 
 **Why 20% hidden?** The reference generation panel contains 24 coordinates, so 20% masking hides approximately five properties. In the raw outer-test population, the 99th percentile of naturally missing panel coordinates is four of 24 (`16.7%`); among the blind-eligible 3,000-material cohort, the 99th percentile is five of 24 (`20.8%`). Thus 20% masking represents an empirically severe, approximately 99th-percentile partial-observation regime rather than an arbitrary masking fraction.
 
-**Why 0.50?** \(R_C<0.50\) requires at least a 50% reduction in reconstruction loss relative to independent-marginal completion: a minimum twofold improvement under an empirically high-missingness regime.
+**Why 0.50?** $R_C<0.50$ requires at least a 50% reduction in reconstruction loss relative to independent-marginal completion: a minimum twofold improvement under an empirically high-missingness regime.
 
 The 50%- and 80%-hidden results are required diagnostics but are not strong-effect gates.
 
@@ -629,7 +629,7 @@ Set `conditional_completion_useful = YES` iff the 20%-hidden gate passes.
 
 A scientific submission must satisfy all five simultaneously:
 
-\[
+$$
 \boxed{
 \begin{aligned}
 CI^{upper}_{95}(\bar J^E_{20}) &< 0.30,\\
@@ -639,7 +639,7 @@ CI^{lower}_{95}(G) &> 0.70,\\
 CI^{upper}_{95}(R_C(0.20)) &< 0.50.
 \end{aligned}
 }
-\]
+$$
 
 These are **strong-effect**, not merely statistical-significance, requirements. The first three are calibrated against raw-data perturbation/null experiments; the cross-structure floor is conservative relative to deliberate destruction of the observed joint distribution; and the completion test combines a twofold improvement requirement with an approximately 99th-percentile empirical missingness regime.
 
