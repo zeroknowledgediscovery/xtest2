@@ -1,0 +1,267 @@
+{
+  "model_family": "semiparametric_gaussian_copula_em",
+  "geometry_family": "copula_precision_mahalanobis_full_completion",
+  "fixed_model_settings": {
+    "em_iterations": 30,
+    "covariance_ridge": 1e-06
+  },
+  "generation_panel": {
+    "numeric_columns": [
+      "nat",
+      "density",
+      "formation_energy_peratom",
+      "ehull",
+      "optb88vdw_bandgap",
+      "magmom_oszicar",
+      "magmom_outcar",
+      "epsx",
+      "epsy",
+      "epsz",
+      "chem_n_elements",
+      "chem_composition_entropy",
+      "chem_mean_atomic_number",
+      "chem_atomic_number_range",
+      "chem_mean_electronegativity",
+      "chem_electronegativity_range",
+      "chem_mean_atomic_radius",
+      "chem_atomic_radius_range",
+      "chem_mean_group",
+      "chem_group_range",
+      "chem_mean_period",
+      "chem_period_range"
+    ],
+    "categorical_columns": [
+      "crys",
+      "dimensionality"
+    ],
+    "selection_rule": "numeric: finite training coverage >= 0.50 and >= 3 distinct observed values; categorical (crys, dimensionality): nonmissing training coverage >= 0.50. Evaluated only on the 50,000-row outer training set.",
+    "numeric_report": {
+      "nat": {
+        "coverage": 1.0,
+        "n_distinct": 74,
+        "included": true
+      },
+      "density": {
+        "coverage": 1.0,
+        "n_distinct": 12586,
+        "included": true
+      },
+      "formation_energy_peratom": {
+        "coverage": 1.0,
+        "n_distinct": 45578,
+        "included": true
+      },
+      "ehull": {
+        "coverage": 1.0,
+        "n_distinct": 28399,
+        "included": true
+      },
+      "exfoliation_energy": {
+        "coverage": 0.00854,
+        "n_distinct": 419,
+        "included": false
+      },
+      "optb88vdw_bandgap": {
+        "coverage": 1.0,
+        "n_distinct": 5100,
+        "included": true
+      },
+      "mbj_bandgap": {
+        "coverage": 0.22834,
+        "n_distinct": 3525,
+        "included": false
+      },
+      "hse_gap": {
+        "coverage": 0.00056,
+        "n_distinct": 28,
+        "included": false
+      },
+      "spillage": {
+        "coverage": 0.11914,
+        "n_distinct": 1697,
+        "included": false
+      },
+      "magmom_oszicar": {
+        "coverage": 0.9445,
+        "n_distinct": 4261,
+        "included": true
+      },
+      "magmom_outcar": {
+        "coverage": 0.9813,
+        "n_distinct": 9289,
+        "included": true
+      },
+      "epsx": {
+        "coverage": 0.64364,
+        "n_distinct": 31296,
+        "included": true
+      },
+      "epsy": {
+        "coverage": 0.64364,
+        "n_distinct": 31317,
+        "included": true
+      },
+      "epsz": {
+        "coverage": 0.64364,
+        "n_distinct": 31167,
+        "included": true
+      },
+      "mepsx": {
+        "coverage": 0.20978,
+        "n_distinct": 10285,
+        "included": false
+      },
+      "mepsy": {
+        "coverage": 0.20978,
+        "n_distinct": 10309,
+        "included": false
+      },
+      "mepsz": {
+        "coverage": 0.20978,
+        "n_distinct": 10269,
+        "included": false
+      },
+      "avg_elec_mass": {
+        "coverage": 0.1865,
+        "n_distinct": 685,
+        "included": false
+      },
+      "avg_hole_mass": {
+        "coverage": 0.1865,
+        "n_distinct": 883,
+        "included": false
+      },
+      "bulk_modulus_kv": {
+        "coverage": 0.34604,
+        "n_distinct": 10942,
+        "included": false
+      },
+      "shear_modulus_gv": {
+        "coverage": 0.34604,
+        "n_distinct": 8985,
+        "included": false
+      },
+      "poisson": {
+        "coverage": 0.34364,
+        "n_distinct": 520,
+        "included": false
+      },
+      "dfpt_piezo_max_eij": {
+        "coverage": 0.05078,
+        "n_distinct": 1375,
+        "included": false
+      },
+      "dfpt_piezo_max_dij": {
+        "coverage": 0.03574,
+        "n_distinct": 855,
+        "included": false
+      },
+      "dfpt_piezo_max_dielectric": {
+        "coverage": 0.04974,
+        "n_distinct": 2486,
+        "included": false
+      },
+      "dfpt_piezo_max_dielectric_electronic": {
+        "coverage": 0.0509,
+        "n_distinct": 2544,
+        "included": false
+      },
+      "dfpt_piezo_max_dielectric_ionic": {
+        "coverage": 0.0509,
+        "n_distinct": 2543,
+        "included": false
+      },
+      "max_ir_mode": {
+        "coverage": 0.05086,
+        "n_distinct": 1148,
+        "included": false
+      },
+      "min_ir_mode": {
+        "coverage": 0.0509,
+        "n_distinct": 683,
+        "included": false
+      },
+      "Tc_supercon": {
+        "coverage": 0.01166,
+        "n_distinct": 582,
+        "included": false
+      },
+      "chem_n_elements": {
+        "coverage": 1.0,
+        "n_distinct": 7,
+        "included": true
+      },
+      "chem_composition_entropy": {
+        "coverage": 1.0,
+        "n_distinct": 1156,
+        "included": true
+      },
+      "chem_mean_atomic_number": {
+        "coverage": 1.0,
+        "n_distinct": 6212,
+        "included": true
+      },
+      "chem_atomic_number_range": {
+        "coverage": 1.0,
+        "n_distinct": 94,
+        "included": true
+      },
+      "chem_mean_electronegativity": {
+        "coverage": 1.0,
+        "n_distinct": 11257,
+        "included": true
+      },
+      "chem_electronegativity_range": {
+        "coverage": 1.0,
+        "n_distinct": 672,
+        "included": true
+      },
+      "chem_mean_atomic_radius": {
+        "coverage": 1.0,
+        "n_distinct": 3508,
+        "included": true
+      },
+      "chem_atomic_radius_range": {
+        "coverage": 1.0,
+        "n_distinct": 103,
+        "included": true
+      },
+      "chem_mean_group": {
+        "coverage": 1.0,
+        "n_distinct": 2192,
+        "included": true
+      },
+      "chem_group_range": {
+        "coverage": 1.0,
+        "n_distinct": 18,
+        "included": true
+      },
+      "chem_mean_period": {
+        "coverage": 1.0,
+        "n_distinct": 1258,
+        "included": true
+      },
+      "chem_period_range": {
+        "coverage": 1.0,
+        "n_distinct": 7,
+        "included": true
+      }
+    },
+    "categorical_report": {
+      "crys": {
+        "coverage": 1.0,
+        "included": true
+      },
+      "dimensionality": {
+        "coverage": 0.99422,
+        "included": true
+      }
+    },
+    "n_training_rows": 50000
+  },
+  "model_artifact_sha256": {
+    "sigma.npy": "920c4901b51c8ca7144ae7d1c24d50655ec91da678608166da30c73786467d0b",
+    "meta.json": "b08b4d113614f41941c45d71c9908ed551d81bcacf644af45722e93957023f2c",
+    "marginals.json": "91a70e12d4ed3e4ba791abc40aabe01c375e57fa506a136f65fc4c486a05f153"
+  }
+}

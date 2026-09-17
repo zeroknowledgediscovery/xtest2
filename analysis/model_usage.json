@@ -1,0 +1,22 @@
+{
+  "Sigma_correlation_matrix": {
+    "used_by": "both",
+    "fitted": true,
+    "notes": "Precision Sigma^-1 defines d_G; Sigma defines the unconditional/conditional sampling distributions used for generation and for the geometry-side latent completion."
+  },
+  "per_column_empirical_marginals": {
+    "used_by": "both",
+    "fitted": true,
+    "notes": "Forward transform (raw->latent) is used to build every latent vector consumed by geometry; inverse transform (latent->raw) is used to realize every generated/completed sample."
+  },
+  "deterministic_alphabetical_category_ordering": {
+    "used_by": "both",
+    "fitted": false,
+    "notes": "Deterministic transformation with no fitted parameters."
+  },
+  "chemistry_summary_features": {
+    "used_by": "both",
+    "fitted": false,
+    "notes": "Deterministic transformation of `formula` with no fitted parameters; enter the same latent model as any other numeric coordinate."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "fitted_parameters": {
+    "Sigma": "p x p latent Gaussian correlation matrix (p = 24), fit by plug-in EM for the missing-data multivariate normal on the 50,000-row outer training set.",
+    "per_column_marginals": "Empirical training CDF (numeric columns) or empirical category frequencies under a fixed alphabetical category order (categorical columns), fit on the same 50,000 training rows."
+  },
+  "fixed_model_settings": {
+    "model_family": "semiparametric_gaussian_copula_em",
+    "geometry_family": "copula_precision_mahalanobis_full_completion",
+    "em_iterations": 30,
+    "covariance_ridge": 1e-06,
+    "generation_panel_numeric_columns": [
+      "nat",
+      "density",
+      "formation_energy_peratom",
+      "ehull",
+      "optb88vdw_bandgap",
+      "magmom_oszicar",
+      "magmom_outcar",
+      "epsx",
+      "epsy",
+      "epsz",
+      "chem_n_elements",
+      "chem_composition_entropy",
+      "chem_mean_atomic_number",
+      "chem_atomic_number_range",
+      "chem_mean_electronegativity",
+      "chem_electronegativity_range",
+      "chem_mean_atomic_radius",
+      "chem_atomic_radius_range",
+      "chem_mean_group",
+      "chem_group_range",
+      "chem_mean_period",
+      "chem_period_range"
+    ],
+    "generation_panel_categorical_columns": [
+      "crys",
+      "dimensionality"
+    ],
+    "generation_min_coverage": 0.5,
+    "generation_min_distinct": 3,
+    "cross_structure_real_verifier_subsample": "train_pos[:10000]: the first 10,000 rows of the fixed 50,000-row outer training set, in the order produced by the mandated outer-split RNG (np.random.default_rng(1)). A fixed, prespecified, non-comparative choice.",
+    "cross_structure_verifier_evaluation_rows": "the full outer-held-out set (all rows with train_mask == False), restricted per-target to rows with that target observed."
+  },
+  "quantization_resolution": null,
+  "quantization_selection_rule": "not applicable: this model uses no quantization/discretization of any coordinate.",
+  "quantization_candidates": [],
+  "model_fitting_randomness": "None. EM is a deterministic fixed-point iteration given Sigma initialized at the identity matrix; the only stochastic parts of the workflow are outer/blind evaluation sampling and generative sampling, both under the fixed seeds listed in protocol_lock.json."
+}

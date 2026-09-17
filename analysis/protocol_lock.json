@@ -1,0 +1,49 @@
+{
+  "model_family": "semiparametric_gaussian_copula_em",
+  "geometry_family": "copula_precision_mahalanobis_full_completion",
+  "fixed_model_settings": {
+    "em_iterations": 30,
+    "covariance_ridge": 1e-06
+  },
+  "quantization_candidates": [],
+  "quantization_selection_rule": "not applicable: no quantization used.",
+  "selected_quantization_resolution": null,
+  "all_evaluation_seeds": {
+    "outer_split_seed": 1,
+    "inner_dev_seed": 271828,
+    "eval_cohort_seed": 20260915,
+    "geometry_novelty_bootstrap_seed": 101002,
+    "retrieval_bootstrap_seed": 101004,
+    "matching_gap_bootstrap_seed": 101005,
+    "independent_marginal_seed": 314159,
+    "unconditional_sample_seed": 161803,
+    "cross_structure_verifier_seed": 99173,
+    "cross_structure_bootstrap_seed": 424242,
+    "completion_row_seed": 20260916,
+    "completion_mask_seed": 27182818,
+    "completion_bootstrap_seed": 577215
+  },
+  "sha256": {
+    "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bootstrap.py": "590cce0d05179f0b9bd5c216a2aef8fe841d4cd6259465bdb3066fdfa1881a35",
+    "chem_features.py": "f32b058a5a3f4d3536b17a4451837ef3fe7cb4406c56499de66242b7c9aab103",
+    "config.py": "2c5b977b0dac7333602186aa05e7ba8aed54a0dec198063e760797d50e7c1928",
+    "copula_model.py": "6fbf8ebfe8ab1af973f52368f8ba82c757b88bbc27234dea2b806fc46ea8d988",
+    "data_prep.py": "1d9698fabc3d94b7fcc34ee0b870ac15a98208fe8715251c87b9e6e5c4fa0fc4",
+    "evaluate.py": "6fa77b4e288e16d269f64c338f3422b5071fe605fc5547cf795b047a2e540454",
+    "independent_baseline.py": "feb38d777cd498094996265871008a73f3d39f613934685778ee9f60981315a7",
+    "lock_utils.py": "5d39bab6388919dd26c4d684ddbbfa1feea9b3f091e124ab43027807d5dafaf7",
+    "panel.py": "d2a1134afa2eb7a0c3c394d3c9b796bd52a2d120062313d995175c8162f8ef31",
+    "periodic_table.py": "5444eba4eda80dac16fe5bb6701a4d91298217a08cb8d61f4e735da7cbc01033",
+    "protocol.py": "ee7fc13f34c2b27e4de6c4dc720f3462da563c1560e5a49afe6a32b9afac7b54",
+    "run_all.py": "6b70d1cdb99df50d3f2fa67c3c28ea9a4f979df27aabbc5a5d85bb266dd719e3",
+    "selection_trace.csv": "26a47325151120a59591d94fd3440c31c40b50d6919ff7687b4816a922635f3a",
+    "model_manifest.json": "ac10497d02f8cd620f4e0db4e776502f37a3f822cb7797bf15ed9a2a6f60e234",
+    "model_usage.json": "36cf2c95954f754587a09377f98a34df1bfc639c31869e60347c6ba1df94a7db",
+    "model_lock.json": "7621c8784a476e5eac6286bcad912077be714b7dbd4e683058e104f1dea26d0a",
+    "generation_panel.json": "bf43c089c3e941d868b40d862cd829b3ce8cd3107e040483384a76fe02160dea",
+    "model_artifacts/marginals.json": "91a70e12d4ed3e4ba791abc40aabe01c375e57fa506a136f65fc4c486a05f153",
+    "model_artifacts/sigma.npy": "920c4901b51c8ca7144ae7d1c24d50655ec91da678608166da30c73786467d0b",
+    "model_artifacts/meta.json": "b08b4d113614f41941c45d71c9908ed551d81bcacf644af45722e93957023f2c"
+  }
+}
