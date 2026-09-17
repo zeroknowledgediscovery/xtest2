@@ -1,0 +1,18 @@
+{
+  "chow_liu_tree_structure": {
+    "description": "Tree edges/root selected by max-MI spanning tree on the fit data; defines both the sampler's factorization and the Fisher-score block structure.",
+    "used_by": "both"
+  },
+  "conditional_probability_tables": {
+    "description": "Each edge CPT P(child|parent) is used both for ancestral/BP sampling and as the Fisher-score reference distribution for that node.",
+    "used_by": "both"
+  },
+  "quantizer_bin_edges_and_levels": {
+    "description": "Discretization shared by geometry (Fisher score) and generation (ancestral/BP sampling).",
+    "used_by": "both"
+  },
+  "root_marginal": {
+    "description": "P(root) used both as the generation root distribution and as the Fisher-score reference for the root block.",
+    "used_by": "both"
+  }
+}

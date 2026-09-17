@@ -1,0 +1,6 @@
+{
+  "answers_sha256": "6cd5e452a1d1735b85405e883c94c34d01e83ddccfd758ca0934071fadaa0f14",
+  "model_lock_sha256": "061dae6f0dd3f969754dba8fc734ed56e56fabacd705192154e542ed1984d6ea",
+  "outer_evaluation_count": 1,
+  "protocol_lock_sha256": "55264a0597ea031182e281d0aaa6e3d5aa1f5914c6b73254cab317093704aae8"
+}

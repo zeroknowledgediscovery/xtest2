@@ -1,0 +1,8 @@
+{
+  "model_artifact_sha256": {
+    "model_artifacts/model.pkl": "2d2fbd3e48fca6035641a380786df88d3546fe9bcf786530bc65e95c4acd70a3"
+  },
+  "n_tree_edges": 44,
+  "quantization_resolution": 5,
+  "tree_root": "epsy"
+}

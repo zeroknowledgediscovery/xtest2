@@ -1,0 +1,56 @@
+{
+  "artifact_sha256": {
+    "model_artifacts/model.pkl": "2d2fbd3e48fca6035641a380786df88d3546fe9bcf786530bc65e95c4acd70a3",
+    "model_lock.json": "061dae6f0dd3f969754dba8fc734ed56e56fabacd705192154e542ed1984d6ea",
+    "model_manifest.json": "63af379feea0833f5ad1e5899a30ae33d842a5f317c1bf5191fa124f8c467844",
+    "model_usage.json": "ea975fe4bfadc4e63637c18b9569cf18090f74820b0b6853f7d68ef4f210f9b6",
+    "selection_trace.csv": "d36bb65f1809c68c927325e40e26a13e3e43c021ec57ba247d8481580139ffd4"
+  },
+  "evaluation_seeds": {
+    "N_ANCHOR_BOOTSTRAP": 3000,
+    "N_COMPLETION_BOOTSTRAP": 3000,
+    "N_VERIFIER_BOOTSTRAP": 2000,
+    "SEED_ANCHOR_BOOTSTRAP_TEST1": 101002,
+    "SEED_ANCHOR_BOOTSTRAP_TEST2_MATCHING": 101005,
+    "SEED_ANCHOR_BOOTSTRAP_TEST2_RETRIEVAL": 101004,
+    "SEED_COMPLETION_BOOTSTRAP": 577215,
+    "SEED_COMPLETION_MASKS": 27182818,
+    "SEED_COMPLETION_ROW_SAMPLE": 20260916,
+    "SEED_EVAL_COHORT": 20260915,
+    "SEED_INDEPENDENT_MARGINAL": 314159,
+    "SEED_UNCONDITIONAL_GENERATION": 161803,
+    "SEED_VERIFIER_BOOTSTRAP": 424242,
+    "VERIFIER_RANDOM_STATE": 99173
+  },
+  "fixed_model_settings": {
+    "fisher_var_eps": 1e-06,
+    "laplace_alpha": 1.0
+  },
+  "geometry_family": "fisher_score_euclidean",
+  "model_family": "chow_liu_tree_categorical_bn",
+  "quantization_candidates": [
+    5,
+    10
+  ],
+  "quantization_selection_rule": "Fit the full Chow-Liu tree model on the 40000-row inner fit split for each candidate q in {5,10} (identical model settings otherwise). Evaluate mean held-out log-likelihood per material on the 10000-row inner development split. Select the q with higher mean held-out log-likelihood; ties broken in favor of the smaller q. This objective does not use any blind transport variable or any outer-held-out row.",
+  "selected_quantization_resolution": 5,
+  "source_file_sha256": {
+    "bootstrap.py": "af59b41ebb8e931bb2daa43acf1812d21ffa6ffe486ba435bd3ab61f2a35538b",
+    "chemistry.py": "453dd645bfb5fd0fc71ef34290906fdf909c6786272579cd9ebdca02c239fb9a",
+    "completion.py": "3cd2d01fdbb1bab147b7fcca65065722fe01d92e6002708d9bc5e0a99ebec01f",
+    "config.py": "a381116c6944da62b3ed727d4fd6a8d21b05069d80c5abee48404a9293b7ae48",
+    "cross_structure.py": "ba8d1ee1598d5e7deed3ebd0a44b81fd1e283df50f3ce4562fbe31c78a47c8fb",
+    "data_loading.py": "0f2fa3d086ba9cdfd2f7d5e6bfb673b255ba4acd8682adcfe488c9679645f06c",
+    "distances.py": "75b6758e8bc1c66f94f01f83570523c6c22d566d81adbb838a8251ad9ab2e71d",
+    "generation.py": "68b12c8e50378179c3ae33fd784946d8bed8b26bbe0a6863a86c2ce31142ed16",
+    "geometry.py": "321e038ff1179340fa5cc89233cc2292fd7b52031ff1370a9ad5640a8052902a",
+    "lock_utils.py": "51cf38c3821bff19bbaa5bbd78f35a1b6d7c0bc3b1569486fa82351f0aaaf5a0",
+    "novelty.py": "96bd8c38c33640540d6d734b4ef0cfaddf9ab225c9d56b5c148968d34235e69d",
+    "panel.py": "101663af0d28069a5713c2f91fa2be92dbe27dc15d9c9153ce0bb29ecb6e839c",
+    "periodic_table_data.py": "f59fed7bac92be411c63a7dc02adc31ca2afffc3bfff19aa633da067eee3fce5",
+    "quantize.py": "5cfbff8481d1fd47cb0444d330da096dcb30d24223c10f450b58486517b9e19e",
+    "retrieval.py": "327a0ed1ac5ce56fc5601ba8ca6b63e542299ca89d00a101059bece3c78f5b91",
+    "run_all.py": "904d373929f2f5230adca4b69379cb95213721f63a1a5cef36b918377dfcea00",
+    "tree_model.py": "61a411405e1bb00b70a8ca5d3565a7c7daa92629ae6f4853d560b26958e406a5"
+  }
+}
