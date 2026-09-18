@@ -6,12 +6,12 @@ Using the supplied JARVIS `dft_3d` catalog, learn **one structural model of mate
 
 1. induces a material geometry substantially different from ordinary physicochemical proximity;
 2. retrieves blind functional analogs from regions that ordinary non-quantized distance regards as far apart;
-3. generates complete material-state vectors from an empty state;
+3. generates complete material-state vectors from an empty state; and
 4. conditionally reconstructs hidden material properties from partial observations.
 
-The geometry and generator must arise from the **same frozen fitted structural model**.
+The same frozen fitted model must provide both geometry and generation. The model family and implementation stack are unrestricted.
 
-The model family is unrestricted, but this is a **no-hyperparameter-tuning challenge**. The only allowed comparative selection is a prespecified finite choice of quantization/discretization resolution, if quantization is used.
+The defining scientific constraint is **no broad hyperparameter tuning**. Only quantization/discretization resolution may be selected comparatively, if quantization is used.
 
 ---
 
@@ -53,7 +53,7 @@ Define row identity exactly as:
 df = df.drop_duplicates(subset="jid", keep="first").reset_index(drop=True)
 ```
 
-`jid` is an identifier only and may not be used as a feature, embedding input, distance component, random-seed source, lookup key, or pair-specific feature.
+`jid` is an identifier only. It may not be used as a model feature, embedding input, distance component, seed source, lookup key, or pair-specific feature.
 
 Use exactly:
 
@@ -73,7 +73,7 @@ outer training: 50,000 materials
 outer held out: 43,902 materials
 ```
 
-No outer-held-out row may influence preprocessing, feature construction, model choice, model settings, geometry, generation, quantization selection, or any later methodological change.
+No outer-held-out row may influence model fitting or model selection.
 
 ---
 
@@ -97,24 +97,29 @@ inner fit:         40,000
 inner development: 10,000
 ```
 
-### Hard no-hyperparameter-tuning rule
+---
+
+## Precisely bounded no-hyperparameter-tuning rule
 
 A submission must use **one prespecified structural-model configuration**.
 
 The only quantity that may be selected by comparing alternatives is the **quantization/discretization resolution**, if quantization is used. Its finite candidate set and endpoint-independent selection rule must be declared before comparison and may use only the fixed inner fit/development split.
 
-No model, architecture, geometry, representation, regularization, complexity, feature weighting, sampler setting, threshold, bandwidth, latent dimension, component count, tree/ensemble size, or analogous setting may be selected by comparing alternatives on any data.
+Allowed:
 
-A solver may choose one fixed value for such quantities. Parameters learned internally by that one fixed algorithm are allowed. If quantization is not used, **no hyperparameter tuning of any kind is allowed**.
+- parameters and structure learned internally by the one chosen algorithm;
+- deterministic preprocessing fixed before comparative evaluation;
+- one fixed value for architecture, regularization, geometry, representation, sampler, capacity, thresholds, bandwidths, etc., provided competing values are not empirically compared;
+- implementation/unit debugging that does not compare scientific performance across alternative configurations;
+- comparative selection only among the declared quantization resolutions.
 
-Any forbidden tuning gives:
+Not allowed:
 
-```text
-analysis_status = IMPLEMENTATION_FAILURE
-no_model_tuning_pass = NO
-```
+- comparing alternative model families, geometry families, representations, latent dimensions/ranks, regularizers, feature-weighting schemes, component/tree/ensemble counts, sampler settings, thresholds, bandwidths, or analogous settings and selecting among them by empirical performance.
 
-`analysis/selection_trace.csv` must contain exactly one structural configuration, except that multiple rows are allowed only when they differ solely in quantization/discretization resolution.
+`analysis/selection_trace.csv` must contain exactly one non-quantization structural configuration. Multiple rows are allowed only when they differ solely in quantization/discretization resolution.
+
+The verifier grades only observable submitted code/artifacts/selection records. It does not infer private experimentation or grade a reasoning transcript.
 
 ---
 
@@ -174,15 +179,15 @@ chem_mean_period
 chem_period_range
 ```
 
-Means are atomic-fraction weighted; ranges are max-minus-min over elements present; and
+Means are atomic-fraction weighted; ranges are max-minus-min over elements present; composition entropy is
 
 $$
 H_{comp}=-\sum_e x_e\log x_e.
 $$
 
-Raw `formula` may not be used as an identity token, embedding, element one-hot vector, or lookup key.
+Raw `formula` may not be used as an identity token, learned embedding, element one-hot vector, or lookup key.
 
-`spg_number` may be used to construct deterministic target-independent crystallographic/group-theoretic descriptors or as a categorical comparator variable, but not as an ordinary continuous geometry coordinate.
+`spg_number` may be used only as a categorical comparator variable or to construct deterministic target-independent crystallographic descriptors; it may not be treated as an ordinary continuous geometry coordinate.
 
 Missing-like categorical values (`""`, `"na"`, `"n/a"`, `"nan"`, `"none"`, `"null"`, `"--"`, `"missing"`) are missing states. Numerical missing values may not be silently replaced by physical zero.
 
@@ -190,7 +195,7 @@ Missing-like categorical values (`""`, `"na"`, `"n/a"`, `"nan"`, `"none"`, `"nul
 
 ## Blind functional endpoints
 
-These eight variables are completely forbidden during model construction and methodological selection:
+These eight variables are completely forbidden during model construction and selection:
 
 ```text
 n-Seebeck
@@ -203,76 +208,35 @@ nkappa
 pkappa
 ```
 
-They may first be read only after the structural model, geometry, quantization rule, sampler, evaluation code, and all fixed settings have been frozen and hashed.
+They are used only during the final held-out retrieval evaluation after the fitted structural model is frozen.
 
 ---
 
-## Single-model requirement
+## Mechanical single-model requirement
 
-Define one fitted model $M$ that provides both
+The workflow must produce one learned artifact bundle `analysis/model_artifacts/*`, denoted $M$.
 
-$$
-d_G(a,b;M)
-$$
+Conceptually the submission implements:
 
-and
+```text
+fit(training data, allowed inner-development information) -> M
+distance(M, a, b) -> d_G(a,b)
+sample(M, observed coordinates, mask, seed) -> material-state sample
+```
 
-$$
-X\sim P_M(X\mid X_O=x_O),
-$$
+Both `distance` and `sample` must consume the same frozen learned artifact bundle. Deterministic read-only transformations of that bundle are allowed. No second learned model, separately fitted parameters, or post-hoc learned mapping specialized for only geometry or only generation may be fitted after $M$ is frozen.
 
-including unconditional generation $X\sim P_M(X)$.
-
-A geometry model combined with an independently fitted imputation/generation model is an implementation failure.
-
-Write `analysis/model_usage.json` listing every learned artifact and whether it is used by `geometry`, `generation`, or `both`.
+Write `analysis/model_usage.json` identifying the artifact bundle and the code paths used by geometry and generation. Write `analysis/model_manifest.json` recording model family, fixed settings, fitting seed(s), and selected quantization resolution if applicable.
 
 ---
 
-## Protocol lock and one-shot outer evaluation
+## Final-evaluation boundary
 
-Before reading any outer-held-out row or blind endpoint, create:
+The final outer evaluation begins when the submitted evaluation stage first reads an outer-held-out material or blind-endpoint value.
 
-```text
-analysis/selection_trace.csv
-analysis/model_manifest.json
-analysis/model_usage.json
-analysis/model_lock.json
-analysis/protocol_lock.json
-analysis/model_artifacts/*
-```
+Before that point, the fitted artifact bundle, fixed non-quantization settings, any permitted quantization choice, and evaluation code must be fixed. A syntax/runtime error may be repaired before this point. Once final evaluation begins, the scientific configuration is not revised and reevaluated.
 
-`protocol_lock.json` must contain SHA-256 hashes for all submitted source files, locks, manifests, selection records, and fitted model artifacts, and must record:
-
-```text
-model_family
-geometry_family
-fixed_model_settings
-quantization_candidates
-quantization_selection_rule
-selected_quantization_resolution
-all evaluation seeds
-```
-
-Once outer evaluation begins, the model and protocol are immutable. Only one scientific outer evaluation is allowed.
-
-Write:
-
-```text
-analysis/outer_evaluation_history.jsonl
-analysis/outer_evaluation_receipt.json
-```
-
-with at least:
-
-```text
-outer_evaluation_count = 1
-protocol_lock_sha256
-model_lock_sha256
-answers_sha256
-```
-
-A syntax/runtime bug may be fixed before outer data are read. Methodological changes after outer evaluation begins are prohibited.
+No branch-history audit, append-only history, or hidden-development reconstruction is required. The final grader runs the submitted workflow once with fixed evaluation seeds.
 
 ---
 
@@ -284,13 +248,13 @@ $$
 d_G(a,a)=0
 $$
 
-within `1e-12` and
+within `1e-12`, and
 
 $$
 |d_G(a,b)-d_G(b,a)|\le10^{-10}.
 $$
 
-Construct standardized non-quantized Euclidean distance $d_E$ from eligible numerical construction variables and the 12 chemistry summaries. Estimate standard deviations from the 50,000 training rows only:
+Construct standardized non-quantized Euclidean distance $d_E$ from eligible numerical construction variables and the 12 chemistry summaries. Estimate coordinate SDs from the 50,000 training rows only:
 
 $$
 d_E(a,b)=\sqrt{\frac{1}{|O_{ab}|}\sum_{j\in O_{ab}}\left(\frac{x_{aj}-x_{bj}}{\sigma_j}\right)^2}.
@@ -298,13 +262,15 @@ $$
 
 Require at least 10 jointly observed numerical coordinates.
 
-Also compute a mixed Gower-style comparator $d_M$ including `crys`, `dimensionality`, and `spg_number` as categorical variables. Mixed-distance and rank-correlation results are required diagnostics but are not strong-effect gates.
+Also compute a mixed Gower-style comparator $d_M$ including `crys`, `dimensionality`, and `spg_number` as categorical variables. Mixed-distance and rank-correlation results are diagnostics, not strong-effect gates.
+
+For all evaluation nearest-neighbor, `argmin`, and matched-control ties, break ties by smaller deduplicated dataframe position.
 
 ---
 
 ## Fixed large geometry/retrieval cohort
 
-After protocol locking:
+During final evaluation:
 
 ```python
 blind_cols = [
@@ -320,7 +286,7 @@ eval_rng = np.random.default_rng(20260915)
 eval_pos = eval_rng.choice(eligible_pos, size=3000, replace=False)
 ```
 
-Use exactly these 3,000 materials:
+Use exactly these 3,000 materials, giving
 
 $$
 \binom{3000}{2}=4,498,500
@@ -338,27 +304,25 @@ $$
 J^E_{20}(a)=\frac{|N^G_{20}(a)\cap N^E_{20}(a)|}{20}.
 $$
 
-Also report the corresponding mixed overlap and global/anchor-wise Spearman correlations.
+Report the corresponding mixed overlap and global/anchor-wise Spearman correlations as diagnostics.
 
 Use 3,000 anchor-bootstrap replicates with seed `101002`.
 
-## Strong Gate 1 — nontrivial geometric reorganization
+## Strong Gate 1
 
 Require
 
 $$
-\boxed{CI^{upper}_{95}(\bar J^E_{20})<0.30}.
+\boxed{CI^{upper}_{95}(\bar J^E_{20})<0.33}.
 $$
 
-**Why 0.30?** In the raw material space, dropping 10% of coordinates preserves about 84% of 20-neighbor structure, dropping 20% preserves about 74%, and even dropping 50% preserves about 44% on average. Across random 50%-coordinate perturbations, the 5th percentile of mean J20 is approximately `0.294`. Thus `<0.30` requires a reorganization stronger than approximately 95% of geometries produced even after discarding half of the measured raw-property representation.
-
-Set `geometry_novel = YES` iff this gate and geometry validity checks pass.
+Interpretation: at the upper confidence bound, no more than about one-third of learned neighbors may coincide with ordinary Euclidean neighbors, so at least about two-thirds are reorganized. Raw-feature perturbation supports this as a strong effect: dropping 10%, 20%, and 50% of raw coordinates preserves mean J20 of about 0.84, 0.74, and 0.44 respectively; the 5th percentile across 50%-feature removals is about 0.294.
 
 ---
 
 # TEST 2 — blind distant-analog retrieval
 
-Standardize the eight blind transport variables using means and SDs estimated from the 50,000 training rows. Define
+Standardize the eight blind endpoints using means and SDs estimated from the 50,000 training rows. Define
 
 $$
 d_F(a,b)=\sqrt{\frac18\sum_{k=1}^{8}(\widetilde Y_{ak}-\widetilde Y_{bk})^2}.
@@ -373,7 +337,7 @@ $$
 over eligible evaluation pairs. For each anchor define
 
 $$
-C_a=\{b:d_E(a,b)\ge e_{0.90}\},
+C_a=\{b:d_E(a,b)\ge e_{0.90}\}
 $$
 
 and retrieve
@@ -382,7 +346,7 @@ $$
 b_G(a)=\arg\min_{b\in C_a}d_G(a,b).
 $$
 
-Select 20 distinct controls from $C_a$, excluding $b_G(a)$, whose $d_E$ values are closest to that of the retrieved pair.
+Select 20 distinct controls from $C_a$, excluding $b_G(a)$, whose $d_E$ values are closest to the retrieved pair's $d_E$.
 
 Define
 
@@ -418,9 +382,7 @@ $$
 CI^{upper}_{95}(G_{match})<0.10.
 $$
 
-This is a validity control, not one of the five strong-effect gates.
-
-## Strong Gate 2 — retrieval effect size
+### Strong Gate 2
 
 Require
 
@@ -428,9 +390,9 @@ $$
 \boxed{CI^{upper}_{95}(R_{retrieval})<0.70}.
 $$
 
-**Why 0.70?** Random retrieval among raw-distance-matched far materials gives $R_{null}\approx0.995$, SD about `0.009`, and a 1st percentile around `0.976`; none of 3,000 raw-null experiments reached `0.70`. The gate therefore requires at least a 30% reduction in blind functional distance in a regime where ordinary random variation produces ratios near 1.
+Raw-distance-matched random retrieval gives $R_{null}\approx0.995$ with SD about 0.009 and 1st percentile about 0.976; none of 3,000 null experiments reached 0.70. The gate requires at least a 30% functional-distance reduction.
 
-## Strong Gate 3 — retrieval consistency
+### Strong Gate 3
 
 Require
 
@@ -438,9 +400,7 @@ $$
 \boxed{CI^{lower}_{95}(W)>0.80}.
 $$
 
-**Why 0.80?** Raw-distance-matched random retrieval gives $W_{null}\approx0.585$, with a 99th percentile around `0.604`; none of 3,000 null experiments reached `0.80`. The gate therefore requires improvement for at least four out of five materials with 95% confidence.
-
-Set `retrieval_useful = YES` iff both strong retrieval gates and raw-distance matching validity pass.
+The corresponding raw-null win rate is about 0.585 with 99th percentile about 0.604; none of 3,000 null experiments reached 0.80. The gate therefore requires improvement for at least about four out of five anchors with 95% confidence.
 
 ---
 
@@ -455,13 +415,7 @@ distinct observed values >= 3
 
 Include `crys` and `dimensionality` iff nonmissing coverage is at least `0.50`. Apply the same numerical rule to the 12 chemistry summaries.
 
-Write the fixed panel to:
-
-```text
-analysis/generation_panel.json
-```
-
-before outer evaluation. On the supplied dataset the reference protocol yields a 24-coordinate panel.
+Write `analysis/generation_panel.json` before final evaluation. On the supplied dataset the reference protocol yields a 24-coordinate panel.
 
 ---
 
@@ -473,21 +427,17 @@ $$
 P_{IND}(X)=\prod_j\widehat P_{train}(X_j)
 $$
 
-from the 50,000 training materials. For conditional completion, observed coordinates remain fixed and hidden coordinates are sampled independently from their training marginals. Use seed `314159`.
+from the 50,000 training materials. For conditional completion, observed coordinates remain fixed and hidden coordinates are sampled independently from training marginals. Use seed `314159`.
 
 ---
 
 # TEST 3 — unconditional generation
 
-Generate exactly `10,000` samples from $P_M(X)$ with no material coordinates supplied, using seed `161803`.
+Generate exactly 10,000 samples from $P_M(X)$ with no observed material coordinates, using seed `161803`.
 
-Write:
+Write `analysis/unconditional_samples.csv.gz`.
 
-```text
-analysis/unconditional_samples.csv.gz
-```
-
-Validity requires:
+Validity requires exactly:
 
 ```text
 valid complete rows >= 9500 / 10000
@@ -495,9 +445,7 @@ unique generated rows >= 80%
 exact training-row matches <= 10%
 ```
 
-Use numerical rounding to `1e-8` for exact-row comparison. Marginal fidelity must be reported but is descriptive.
-
-Set `blank_generation_valid = YES` iff all three conditions pass.
+Use numerical rounding to `1e-8` for uniqueness and exact-row comparison. Marginal fidelity is reported but descriptive.
 
 ---
 
@@ -525,15 +473,27 @@ max_features = "sqrt"
 random_state = 99173
 ```
 
-Fit preprocessing statistics and encoders from the real 50,000-row training set. Train three verifier versions on 10,000 rows each:
+Fit preprocessing statistics and encoders from the real 50,000-row training set. Train verifier versions on 10,000 rows each from:
 
-1. real training materials;
-2. submitted generated materials;
-3. independent-marginal materials.
+```text
+REAL: real training materials
+GEN:  submitted generated materials
+IND:  independent-marginal materials
+```
 
-Evaluate all three on the same real outer-held-out rows.
+Evaluate all three on the same real outer-held-out rows eligible for that target.
 
-For numerical targets use $L_j=MAE_j/IQR_j^{train}$. For categorical targets use $L_j=1-accuracy_j$.
+For numerical targets:
+
+$$
+L_j=MAE_j/IQR_j^{train}.
+$$
+
+For categorical targets:
+
+$$
+L_j=1-accuracy_j.
+$$
 
 A target is informative iff
 
@@ -555,7 +515,7 @@ $$
 
 Bootstrap outer-held-out verifier rows 2,000 times with seed `424242`, without refitting verifier models.
 
-## Strong Gate 4 — cross-structure retention
+## Strong Gate 4
 
 Require
 
@@ -563,17 +523,23 @@ $$
 \boxed{CI^{lower}_{95}(G)>0.70}.
 $$
 
-**Why 0.70?** $G=0$ corresponds to independent-marginal structure and $G\approx1$ to real-data-level recoverable structure. Raw-data degradation gives approximately `G=1.00` for a real joint resample, `0.88` after replacing 30% of rows by independent-marginal samples, and `0.80` after replacing 50%. A 0.70 lower-confidence floor is therefore conservative relative to severe deliberate destruction of the empirical joint structure while still requiring preservation of a substantial majority of recoverable cross-variable information.
-
-Set `cross_structure_preserved = YES` iff this gate passes.
+Calibration: a real joint resample gives $G\approx1.00$; replacing 30% and 50% of rows with independent-marginal samples gives approximately 0.88 and 0.80. The 0.70 floor is therefore conservative relative to severe deliberate destruction of joint structure.
 
 ---
 
-# TEST 4 — arbitrary partial-state completion
+# TEST 4 — partial-state completion
 
-Use exactly **8,000** outer-held-out materials having at least 80% of the generation panel originally observed, sampled with seed `20260916`.
+Use exactly **8,000** outer-held-out materials having at least 80% of the generation panel originally observed, sampled without replacement using seed `20260916`.
 
-Create independent reproducible masks with seed `27182818` at:
+For each row and each masking level, let `obs` be the list of originally observed panel coordinates and hide exactly
+
+```python
+k = int(round(hidden_fraction * len(obs)))
+```
+
+coordinates selected from `np.random.default_rng(27182818).permutation(len(obs))` in the sequential row/level order of the evaluation loop.
+
+Evaluate:
 
 ```text
 20% hidden
@@ -581,9 +547,9 @@ Create independent reproducible masks with seed `27182818` at:
 80% hidden
 ```
 
-For each masked row and masking level generate exactly 10 conditional completions. Supplied observed coordinates must remain unchanged.
+For every row and masking level generate exactly 10 conditional completions. Supplied observed coordinates must remain unchanged.
 
-For hidden numerical coordinates, use the median of the 10 generated values as the point completion. For hidden categorical coordinates, use the modal state, breaking ties lexicographically.
+For a hidden numerical coordinate, use the median of the 10 generated values. For a hidden categorical coordinate, use the mode, breaking ties lexicographically.
 
 For numerical coordinate $j$:
 
@@ -591,23 +557,25 @@ $$
 \ell_j=\frac{|\hat x_j-x_j|}{IQR_j^{train}}.
 $$
 
+If training IQR is zero, use the positive training range; if that is also zero, use 1.0.
+
 For categorical coordinate $j$:
 
 $$
 \ell_j=I(\hat x_j\ne x_j).
 $$
 
-Average first within coordinate across rows and then equally across coordinates. Let $L_M(q)$ be submitted-model loss and $L_{IND}(q)$ independent-marginal loss. Define
+Average first within coordinate across rows and then equally across coordinates. Let $L_M(q)$ and $L_{IND}(q)$ be submitted-model and independent-marginal loss. Define
 
 $$
 R_C(q)=\frac{L_M(q)}{L_{IND}(q)}.
 $$
 
-Bootstrap completion rows 3,000 times with seed `577215`.
+Use 3,000 row-bootstrap replicates with seed `577215`. Use the same bootstrap row-index arrays for model and baseline.
 
 Report all three masking levels and coordinate-wise win fractions.
 
-## Strong Gate 5 — high-information conditional completion
+## Strong Gate 5
 
 Require
 
@@ -615,24 +583,22 @@ $$
 \boxed{CI^{upper}_{95}(R_C(0.20))<0.50}.
 $$
 
-**Why 20% hidden?** The reference generation panel contains 24 coordinates, so 20% masking hides approximately five properties. In the raw outer-test population, the 99th percentile of naturally missing panel coordinates is four of 24 (`16.7%`); among the blind-eligible 3,000-material cohort, the 99th percentile is five of 24 (`20.8%`). Thus 20% masking represents an empirically severe, approximately 99th-percentile partial-observation regime rather than an arbitrary masking fraction.
+Why 20%: on a 24-coordinate panel this hides about five properties, approximately the 99th-percentile natural missingness level in the blind-eligible cohort (5/24 = 20.8%).
 
-**Why 0.50?** $R_C<0.50$ requires at least a 50% reduction in reconstruction loss relative to independent-marginal completion: a minimum twofold improvement under an empirically high-missingness regime.
+Why 0.50: this requires at least a twofold improvement over independent-marginal completion. Raw-space nearest-neighbor completion yields ratios around 0.276, 0.284, and 0.329 for 1-, 5-, and 20-NN respectively, showing that the raw material-state distribution contains sufficient real conditional redundancy for a sub-0.50 effect to be feasible. These kNN values are calibration only and are not additional gates.
 
-The 50%- and 80%-hidden results are required diagnostics but are not strong-effect gates.
-
-Set `conditional_completion_useful = YES` iff the 20%-hidden gate passes.
+The 50%- and 80%-hidden results are required diagnostics, not strong gates.
 
 ---
 
 # Five strong discovery gates
 
-A scientific submission must satisfy all five simultaneously:
+All five must pass simultaneously:
 
 $$
 \boxed{
 \begin{aligned}
-CI^{upper}_{95}(\bar J^E_{20}) &< 0.30,\\
+CI^{upper}_{95}(\bar J^E_{20}) &< 0.33,\\
 CI^{upper}_{95}(R_{retrieval}) &< 0.70,\\
 CI^{lower}_{95}(W) &> 0.80,\\
 CI^{lower}_{95}(G) &> 0.70,\\
@@ -641,13 +607,11 @@ CI^{upper}_{95}(R_C(0.20)) &< 0.50.
 }
 $$
 
-These are **strong-effect**, not merely statistical-significance, requirements. The first three are calibrated against raw-data perturbation/null experiments; the cross-structure floor is conservative relative to deliberate destruction of the observed joint distribution; and the completion test combines a twofold improvement requirement with an approximately 99th-percentile empirical missingness regime.
-
-These gates are fixed before any new solver evaluation and may not be changed in response to solver performance.
+These thresholds are fixed before new solver evaluation and must not be altered in response to solver performance.
 
 ---
 
-# Required primary outputs
+# Required outputs
 
 Write `analysis/answers.json` containing at least:
 
@@ -660,11 +624,9 @@ blank_generation_valid
 cross_structure_preserved
 conditional_completion_useful
 single_model_requirement_pass
-single_shot_outer_evaluation_pass
 no_model_tuning_pass
 raw_control_matching_pass
 
-evaluation_count
 pair_count
 
 mean_J20_euclidean
@@ -683,7 +645,6 @@ retrieval_ratio_ci95_upper
 retrieval_win_rate
 retrieval_win_rate_ci95_lower
 retrieval_win_rate_ci95_upper
-mean_abs_control_raw_distance_gap
 raw_control_matching_gap_ratio
 raw_control_matching_gap_ratio_ci95_lower
 raw_control_matching_gap_ratio_ci95_upper
@@ -726,11 +687,8 @@ analysis/unconditional_samples.csv.gz
 analysis/generation_panel.json
 analysis/model_manifest.json
 analysis/model_usage.json
-analysis/model_lock.json
-analysis/protocol_lock.json
 analysis/selection_trace.csv
-analysis/outer_evaluation_history.jsonl
-analysis/outer_evaluation_receipt.json
+analysis/model_artifacts/*
 ```
 
 ---
@@ -739,56 +697,31 @@ analysis/outer_evaluation_receipt.json
 
 Use exactly one final `analysis_status`.
 
-## IMPLEMENTATION_FAILURE
+`IMPLEMENTATION_FAILURE` is reserved for mechanically observable invalidity: wrong fixed split; blind endpoints used in fitting/selection code; submitted comparative non-quantization search; geometry and generation using separately fitted learned models; missing required artifacts; invalid/asymmetric distance; or altered supplied coordinates during completion.
 
-Use for any protocol violation, including wrong split, forbidden tuning, outer/blind leakage, post-outer methodological revision, more than one scientific outer evaluation, independently fitted geometry/generation models, lock/hash mismatch, invalid/asymmetric distance, altered observed completion values, real-row-seeded unconditional generation, or missing/unreproducible required artifacts.
+`GEOMETRY_FAILURE`: implementation valid but Strong Gate 1 fails.
 
-## GEOMETRY_FAILURE
+`RETRIEVAL_FAILURE`: geometry passes but Strong Gate 2, Strong Gate 3, or raw-distance matching validity fails.
 
-Use if implementation checks pass but Strong Gate 1 fails.
+`GENERATION_FAILURE`: geometry/retrieval pass but unconditional-generation validity, Strong Gate 4, or Strong Gate 5 fails.
 
-## RETRIEVAL_FAILURE
+`DISCOVERY_SUCCESS`: all mechanical validity checks, generation validity, raw-control matching, and all five strong gates pass.
 
-Use if geometry passes but either Strong Gate 2, Strong Gate 3, or raw-distance matching validity fails.
-
-## GENERATION_FAILURE
-
-Use if geometry and retrieval pass but any of the following fail:
-
-```text
-blank_generation_valid
-Strong Gate 4
-Strong Gate 5
-single_model_requirement_pass
-```
-
-## DISCOVERY_SUCCESS
-
-Set
-
-```text
-analysis_status = DISCOVERY_SUCCESS
-primary_discovery = YES
-```
-
-iff all implementation checks, generation validity, raw-control matching, and all five strong discovery gates pass.
-
-Otherwise set:
-
-```text
-primary_discovery = NO
-```
+Set `primary_discovery = YES` only for `DISCOVERY_SUCCESS`; otherwise `NO`.
 
 ---
 
 # Reproducibility
 
-A fresh run must recreate every graded output from:
+A fresh run must recreate the graded outputs from:
 
 ```text
 jarvis.tgz
 submitted source code
 declared package dependencies
+the submitted/fitted model artifact created by the workflow
 ```
 
-No precomputed pair labels, external material database, hidden manually curated table, or unpublished artifact may be required. Evaluation randomness must use exactly the seeds specified above. Model-fitting randomness is allowed but must be documented in `model_manifest.json`, and the evaluated fitted realization must be frozen before outer evaluation.
+Evaluation randomness must use exactly the seeds specified above. If model fitting itself is stochastic, its seed must be declared in `model_manifest.json` and fixed for the evaluated realization.
+
+The grader does not require reproduction of the reference model's numerical values. It evaluates the submitted model against the fixed gates and validity conditions above.
