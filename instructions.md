@@ -239,8 +239,6 @@ The thresholds were chosen to represent large effects relative to the intrinsic 
 
 Passing all five gates therefore provides convergent evidence that the same structural model learns a nontrivial and functionally meaningful material geometry and faithfully generates valid multivariate property data, rather than merely reproducing individual property marginals.
 
-These thresholds are fixed before new solver evaluation and must not be altered in response to solver performance.
-
 # Required outputs
 Write `analysis/answers.json` containing at least:
 ```text
