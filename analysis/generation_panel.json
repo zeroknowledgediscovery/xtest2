@@ -1,0 +1,35 @@
+{
+  "numeric_coordinates": [
+    "nat",
+    "density",
+    "formation_energy_peratom",
+    "ehull",
+    "optb88vdw_bandgap",
+    "magmom_oszicar",
+    "magmom_outcar",
+    "epsx",
+    "epsy",
+    "epsz",
+    "chem_n_elements",
+    "chem_composition_entropy",
+    "chem_mean_atomic_number",
+    "chem_atomic_number_range",
+    "chem_mean_electronegativity",
+    "chem_electronegativity_range",
+    "chem_mean_atomic_radius",
+    "chem_atomic_radius_range",
+    "chem_mean_group",
+    "chem_group_range",
+    "chem_mean_period",
+    "chem_period_range"
+  ],
+  "categorical_coordinates": [
+    "crys",
+    "dimensionality"
+  ],
+  "panel_size": 24,
+  "coverage_rule": {
+    "numeric": "finite coverage >= 0.50 and distinct observed values >= 3, computed from the 50,000 training rows",
+    "categorical (crys, dimensionality only)": "nonmissing coverage >= 0.50, computed from the 50,000 training rows"
+  }
+}

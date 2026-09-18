@@ -1,0 +1,52 @@
+{
+  "model_family": "quantized_state_chow_liu_tree_model",
+  "description": "Each of the 24 generation-panel coordinates is discretized into a small number of quantile-bin states (numeric) or its native levels (categorical), plus an explicit missing state. A Chow-Liu maximum-spanning-tree dependency structure over pairwise mutual information between quantized coordinates is learned from the training data, with Laplace-smoothed conditional probability tables on each edge. The same frozen (bin edges + tree + CPTs) bundle provides both the geometry (mutual-information-weighted Hamming distance between quantized state vectors -> d_G, deliberately decorrelated from raw per-coordinate magnitude) and generation (ancestral tree sampling unconditionally; exact two-pass sum-product belief propagation for per-node posterior marginals given partial evidence, conditionally).",
+  "quant_candidates": [
+    3,
+    4,
+    6
+  ],
+  "selected_quant_resolution": 3,
+  "selection_criterion": "Number of quantile bins per numeric coordinate, selected by cross-validated training log-likelihood using an internal 80/20 split of the 50,000 training rows only (never the outer held-out rows); the only comparison performed across alternatives, restricted to the declared quantization resolutions as permitted by the no-hyperparameter-tuning rule.",
+  "distance_weighting": "Each coordinate's Hamming mismatch indicator is weighted by its Chow-Liu mutual information with its tree parent (root coordinate: its strongest neighbor MI) -- a fixed, deterministic read-out of the single fitted tree's own edge structure, not an additional fitted model or a comparison across alternative geometries.",
+  "fit_seed": 20260917,
+  "generation_panel_size": 24,
+  "numeric_coordinates": [
+    "nat",
+    "density",
+    "formation_energy_peratom",
+    "ehull",
+    "optb88vdw_bandgap",
+    "magmom_oszicar",
+    "magmom_outcar",
+    "epsx",
+    "epsy",
+    "epsz",
+    "chem_n_elements",
+    "chem_composition_entropy",
+    "chem_mean_atomic_number",
+    "chem_atomic_number_range",
+    "chem_mean_electronegativity",
+    "chem_electronegativity_range",
+    "chem_mean_atomic_radius",
+    "chem_atomic_radius_range",
+    "chem_mean_group",
+    "chem_group_range",
+    "chem_mean_period",
+    "chem_period_range"
+  ],
+  "categorical_coordinates": [
+    "crys",
+    "dimensionality"
+  ],
+  "other_fixed_seeds": {
+    "unconditional_generation_seed": 161803,
+    "test3b_real_verifier_subsample_seed": 271828,
+    "test3b_verifier_random_state": 99173,
+    "test3b_ind_training_set_seed": 314159,
+    "test4_mask_selection_seed": 27182818,
+    "test4_model_sample_base_seed": 90909090,
+    "test4_ind_sample_base_seed": 314159,
+    "test4_cohort_selection_seed": 20260916
+  }
+}

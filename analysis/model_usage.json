@@ -1,0 +1,7 @@
+{
+  "artifact_bundle": "analysis/model_artifacts/structural_model.pkl.xz",
+  "artifact_class": "src.tree_model.StructuralModel",
+  "geometry_code_path": "analysis/src/tree_model.py:StructuralModel.distance_matrix (mutual-information-weighted Hamming distance on quantized states via .encode())",
+  "generation_code_path": "analysis/src/tree_model.py:StructuralModel.sample_unconditional (ancestral tree sampling) and StructuralModel.sample_conditional_batch (exact tree belief propagation)",
+  "single_model_note": "Both distance(M,.,.) and sample(M,.,.) are deterministic, read-only transformations of the one frozen bin-edge + Chow-Liu tree + CPT bundle produced once by StructuralModel.fit(). No additional model is fit afterwards for either purpose."
+}
