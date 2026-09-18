@@ -4,7 +4,7 @@
 Using the supplied JARVIS `dft_3d` catalog, learn **one structural model of material state** that simultaneously:
 1. induces a material geometry substantially different from ordinary physicochemical proximity;
 2. retrieves blind functional analogs from regions that ordinary non-quantized distance regards as far apart;
-3. generates distinct complete material-state vectors from an empty state ie no properties specified which must be validated in an objective sense to be physically probabale (not just marginals but the entire vector of values of the physical properties); and
+3. generates distinct complete material-state vectors from an empty state (no properties specified), whose multivariate physical coherence—not merely marginal fidelity—is objectively validated; and
 4. conditionally reconstructs hidden material properties from partial observations.
 
 The same frozen fitted model must provide both geometry and generation. The model family and implementation stack are unrestricted. The defining scientific constraint is **no hyperparameter tuning**. 
@@ -109,10 +109,7 @@ chem_group_range
 chem_mean_period
 chem_period_range
 ```
-Means are atomic-fraction weighted; ranges are max-minus-min over elements present; composition entropy is
-$$
-H_{comp}=-\sum_e x_e\log x_e.
-$$
+Means are atomic-fraction weighted; ranges are max-minus-min over elements present; composition entropy is $H_{comp}=-\sum_e x_e\log x_e$.
 Raw `formula` may not be used as an identity token, learned embedding, element one-hot vector, or lookup key.
 `spg_number` may be used only as a categorical comparator variable or to construct deterministic target-independent crystallographic descriptors; it may not be treated as an ordinary continuous geometry coordinate.
 Missing-like categorical values (`""`, `"na"`, `"n/a"`, `"nan"`, `"none"`, `"null"`, `"--"`, `"missing"`) are missing states. Numerical missing values may not be silently replaced by physical zero.
@@ -163,16 +160,10 @@ eval_pos = eval_rng.choice(eligible_pos, size=3000, replace=False)
 Use exactly these 3,000 materials, giving $ \binom{3000}{2}=4,498,500 $ unordered pairs.
 
 # TEST 1 — geometry novelty
-For each anchor $a$, compute its 20 nearest neighbors under $d_G,d_E,d_M$. Define
-$$
-J^E_{20}(a)=\frac{|N^G_{20}(a)\cap N^E_{20}(a)|}{20}.
-$$
+For each anchor $a$, compute its 20 nearest neighbors under $d_G,d_E,d_M$. Define $J^E_{20}(a)=|N^G_{20}(a)\cap N^E_{20}(a)|/20$.
 Report the corresponding mixed overlap and global/anchor-wise Spearman correlations as diagnostics. Use 3,000 anchor-bootstrap replicates with seed `101002`.
 ## Strong Gate 1
-Require
-$$
-\boxed{CI^{upper}_{95}(\bar J^E_{20})<0.33}.
-$$
+Require $CI^{upper}_{95}(\bar J^E_{20})<0.33$.
 Interpretation: at the upper confidence bound, no more than about one-third of learned neighbors may coincide with ordinary Euclidean neighbors, so at least about two-thirds are reorganized. Raw-feature perturbation supports this as a strong effect: dropping 10%, 20%, and 50% of raw coordinates preserves mean J20 of about 0.84, 0.74, and 0.44 respectively; the 5th percentile across 50%-feature removals is about 0.294.
 
 # TEST 2 — blind distant-analog retrieval
@@ -180,14 +171,7 @@ Standardize the eight blind endpoints using means and SDs estimated from the 50,
 $$
 d_F(a,b)=\sqrt{\frac18\sum_{k=1}^{8}(\widetilde Y_{ak}-\widetilde Y_{bk})^2}.
 $$
-Let $ e_{0.90}=Q_{0.90}(d_E) $ over eligible evaluation pairs. For each anchor define
-$$
-C_a=\{b:d_E(a,b)\ge e_{0.90}\}
-$$
-and retrieve
-$$
-b_G(a)=\arg\min_{b\in C_a}d_G(a,b).
-$$
+Let $e_{0.90}=Q_{0.90}(d_E)$ over eligible evaluation pairs. For each anchor define $C_a=\{b:d_E(a,b)\ge e_{0.90}\}$ and retrieve $b_G(a)=\arg\min_{b\in C_a}d_G(a,b)$.
 Select 20 distinct controls from $C_a$, excluding $b_G(a)$, whose $d_E$ values are closest to the retrieved pair's $d_E$. Define
 $$
 R_{retrieval}=\frac{\operatorname{mean}_a d_F(a,b_G(a))}{\operatorname{mean}_a\operatorname{mean}_{c\in C_a^{match}}d_F(a,c)}
@@ -198,25 +182,12 @@ $$ Use 3,000 anchor-bootstrap replicates with seed `101004`.
 Define $$
 G_{match}=\frac{\operatorname{mean}_a\frac1{20}\sum_{c\in C_a^{match}}|d_E(a,c)-d_E(a,b_G(a))|}{e_{0.90}}.
 $$
-Use 3,000 anchor-bootstrap replicates with seed `101005`. Require both
-$$
-G_{match}\le0.10
-$$
-and
-$$
-CI^{upper}_{95}(G_{match})<0.10.
-$$
+Use 3,000 anchor-bootstrap replicates with seed `101005`. Require both $G_{match}\le0.10$ and $CI^{upper}_{95}(G_{match})<0.10$.
 ### Strong Gate 2
-Require
-$$
-\boxed{CI^{upper}_{95}(R_{retrieval})<0.70}.
-$$
+Require $CI^{upper}_{95}(R_{retrieval})<0.70$.
 Raw-distance-matched random retrieval gives $R_{null}\approx0.995$ with SD about 0.009 and 1st percentile about 0.976; none of 3,000 null experiments reached 0.70. The gate requires at least a 30% functional-distance reduction.
 ### Strong Gate 3
-Require
-$$
-\boxed{CI^{lower}_{95}(W)>0.80}.
-$$
+Require $CI^{lower}_{95}(W)>0.80$.
 The corresponding raw-null win rate is about 0.585 with 99th percentile about 0.604; none of 3,000 null experiments reached 0.80. The gate therefore requires improvement for at least about four out of five anchors with 95% confidence.
  
 ## Generative evaluation panel
@@ -227,11 +198,7 @@ distinct observed values >= 3
 ```
 Include `crys` and `dimensionality` iff nonmissing coverage is at least `0.50`. Apply the same numerical rule to the 12 chemistry summaries. Write `analysis/generation_panel.json` before final evaluation. On the supplied dataset the reference protocol yields a 24-coordinate panel.
 ## Independent-marginal baseline
-Construct
-$$
-P_{IND}(X)=\prod_j\widehat P_{train}(X_j)
-$$
-from the 50,000 training materials. For conditional completion, observed coordinates remain fixed and hidden coordinates are sampled independently from training marginals. Use seed `314159`.
+Construct $P_{IND}(X)=\prod_j\widehat P_{train}(X_j)$ from the 50,000 training materials. For conditional completion, observed coordinates remain fixed and hidden coordinates are sampled independently from training marginals. Use seed `314159`.
 # TEST 3 — unconditional generation
 Generate exactly 10,000 samples from $P_M(X)$ with no observed material coordinates, using seed `161803`. Write `analysis/unconditional_samples.csv.gz`. Validity requires exactly:
 ```text
@@ -263,32 +230,12 @@ REAL: real training materials
 GEN:  submitted generated materials
 IND:  independent-marginal materials
 ```
-Evaluate all three on the same real outer-held-out rows eligible for that target. For numerical targets:
-$$
-L_j=MAE_j/IQR_j^{train}.
-$$
-For categorical targets:
-$$
-L_j=1-accuracy_j.
-$$
-A target is informative iff
-$$
-L_j^{REAL}\le0.95L_j^{IND}.
-$$
-For each informative target define
-$$
-g_j=\frac{L_j^{IND}-L_j^{GEN}}{L_j^{IND}-L_j^{REAL}},
-$$
-without clipping, and
-$$
-G=\frac1{|J|}\sum_{j\in J}g_j.
-$$
+Evaluate all three on the same real outer-held-out rows eligible for that target. For numerical targets use $L_j=MAE_j/IQR_j^{train}$; for categorical targets use $L_j=1-accuracy_j$.
+A target is informative iff $L_j^{REAL}\le0.95L_j^{IND}$.
+For each informative target define $g_j=(L_j^{IND}-L_j^{GEN})/(L_j^{IND}-L_j^{REAL})$, without clipping, and $G=|J|^{-1}\sum_{j\in J}g_j$.
 Bootstrap outer-held-out verifier rows 2,000 times with seed `424242`, without refitting verifier models.
 ## Strong Gate 4
-Require
-$$
-\boxed{CI^{lower}_{95}(G)>0.70}.
-$$
+Require $CI^{lower}_{95}(G)>0.70$.
 Calibration: a real joint resample gives $G\approx1.00$; replacing 30% and 50% of rows with independent-marginal samples gives approximately 0.88 and 0.80. The 0.70 floor is therefore conservative relative to severe deliberate destruction of joint structure.
 # TEST 4 — partial-state completion
 Use exactly **8,000** outer-held-out materials having at least 80% of the generation panel originally observed, sampled without replacement using seed `20260916`. For each row and each masking level, let `obs` be the list of originally observed panel coordinates and hide exactly
@@ -302,40 +249,20 @@ coordinates selected from `np.random.default_rng(27182818).permutation(len(obs))
 20% hidden
 50% hidden
 ```
-For every row and masking level generate exactly 10 conditional completions. Supplied observed coordinates must remain unchanged. For a hidden numerical coordinate, use the median of the 10 generated values. For a hidden categorical coordinate, use the mode, breaking ties lexicographically. For numerical coordinate $j$:
-$$
-\ell_j=\frac{|\hat x_j-x_j|}{IQR_j^{train}}.
-$$
-If training IQR is zero, use the positive training range; if that is also zero, use 1.0. For categorical coordinate $j$:
-$$
-\ell_j=I(\hat x_j\ne x_j).
-$$
-Average first within coordinate across rows and then equally across coordinates. Let $L_M(q)$ and $L_{IND}(q)$ be submitted-model and independent-marginal loss. Define
-$$
-R_C(q)=\frac{L_M(q)}{L_{IND}(q)}.
-$$
-Use 3,000 row-bootstrap replicates with seed `577215`. Use the same bootstrap row-index arrays for model and baseline. Report all three masking levels and coordinate-wise win fractions.
+For every row and masking level generate exactly 10 conditional completions. Supplied observed coordinates must remain unchanged. For a hidden numerical coordinate, use the median of the 10 generated values. For a hidden categorical coordinate, use the mode, breaking ties lexicographically. For numerical coordinate $j$, use $\ell_j=|\hat x_j-x_j|/IQR_j^{train}$.
+If training IQR is zero, use the positive training range; if that is also zero, use 1.0. For categorical coordinate $j$, use $\ell_j=I(\hat x_j\ne x_j)$.
+Average first within coordinate across rows and then equally across coordinates. Let $L_M(q)$ and $L_{IND}(q)$ be submitted-model and independent-marginal loss. Define $R_C(q)=L_M(q)/L_{IND}(q)$.
+Use 3,000 row-bootstrap replicates with seed `577215`. Use the same bootstrap row-index arrays for model and baseline. Report all four masking levels and coordinate-wise win fractions.
 ## Strong Gate 5
-Require
-$$
-\boxed{CI^{upper}_{95}(R_C(0.20))<0.50}.
-$$
-+ Why 20%: on a 24-coordinate panel this hides about five properties, approximately the 99th-percentile natural missingness level in the blind-eligible cohort (5/24 = 20.8%).
-+ Why 0.50: this requires at least a twofold improvement over independent-marginal completion. Raw-space nearest-neighbor completion yields ratios around 0.276, 0.284, and 0.329 for 1-, 5-, and 20-NN respectively, showing that the raw material-state distribution contains sufficient real conditional redundancy for a sub-0.50 effect to be feasible. These kNN values are calibration only and are not additional gates.
+Require all three primary completion criteria: $CI^{upper}_{95}(R_C(0.05))<0.40$, $CI^{upper}_{95}(R_C(0.10))<0.45$, and $CI^{upper}_{95}(R_C(0.20))<0.50$. The 50%-hidden result is a severe-missingness diagnostic and is not part of the strong gate. On a 24-coordinate panel, 20% masking hides about five properties, approximately the 99th-percentile natural missingness level in the blind-eligible cohort (5/24 = 20.8%). The 0.50 threshold therefore requires at least a twofold reduction in loss under an empirically severe missingness regime; the provisional 0.40 and 0.45 thresholds impose correspondingly stronger 60% and 55% loss reductions when more of the material state is observed. Raw-space nearest-neighbor completion ratios around 0.276–0.329 show that the dataset contains sufficient conditional redundancy for these effect sizes to be feasible.
 
 # Five strong discovery gates
-All five must pass simultaneously:
-$$
-\boxed{
-\begin{aligned}
-CI^{upper}_{95}(\bar J^E_{20}) &< 0.33,\\
-CI^{upper}_{95}(R_{retrieval}) &< 0.70,\\
-CI^{lower}_{95}(W) &> 0.80,\\
-CI^{lower}_{95}(G) &> 0.70,\\
-CI^{upper}_{95}(R_C(0.20)) &< 0.50.
-\end{aligned}
-}
-$$
+All five conceptual gates must pass simultaneously: geometry novelty $CI^{upper}_{95}(\bar J^E_{20})<0.33$; blind retrieval effect $CI^{upper}_{95}(R_{retrieval})<0.70$; retrieval consistency $CI^{lower}_{95}(W)>0.80$; cross-structure retention $CI^{lower}_{95}(G)>0.70$; and conditional completion satisfying $CI^{upper}_{95}(R_C(0.05))<0.40$, $CI^{upper}_{95}(R_C(0.10))<0.45$, and $CI^{upper}_{95}(R_C(0.20))<0.50$.
+
+The thresholds were chosen to represent large effects relative to the intrinsic variability and perturbation structure of the raw JARVIS data, rather than merely statistical significance. For geometry, the J20 gate requires no more than about one-third of learned neighbors to coincide with ordinary Euclidean neighbors; even removing 10%, 20%, and 50% of measured coordinates preserves mean J20 overlaps of about 0.84, 0.74, and 0.44, with the 5th percentile under 50%-feature removal near 0.294. For blind retrieval, random raw-distance-matched retrieval gives $R\approx0.995$ with a 1st percentile near 0.976, so $R<0.70$ demands at least a 30% functional-distance reduction, while the win-rate null is about 0.585 with a 99th percentile near 0.604, making $W>0.80$ a requirement for broad consistency rather than a favorable mean. For generated cross-structure, controlled replacement of 30% and 50% of real rows by independent-marginal samples gives $G\approx0.88$ and $0.80$, so $G>0.70$ is a conservative floor for retaining a substantial majority of recoverable dependence. For conditional completion, 20% masking hides about five of 24 properties and corresponds closely to the 99th-percentile natural missingness regime; requiring $R_C<0.50$ demands at least a twofold reduction in reconstruction loss, while the provisional 5% and 10% thresholds of 0.40 and 0.45 require 60% and 55% reductions when more information is observed. Raw nearest-neighbor completion ratios of about 0.28–0.33 show that effects of this magnitude are supported by the data.
+
+Passing all five gates therefore provides convergent evidence that the same structural model learns a nontrivial and functionally meaningful material geometry and faithfully generates valid multivariate property data, rather than merely reproducing individual property marginals.
+
 These thresholds are fixed before new solver evaluation and must not be altered in response to solver performance.
 
 # Required outputs
@@ -387,18 +314,22 @@ cross_structure_retention_G_ci95_lower
 cross_structure_retention_G_ci95_upper
 cross_structure_target_win_fraction
 
+completion_ratio_hidden05
+completion_ratio_hidden05_ci95_lower
+completion_ratio_hidden05_ci95_upper
+completion_ratio_hidden10
+completion_ratio_hidden10_ci95_lower
+completion_ratio_hidden10_ci95_upper
 completion_ratio_hidden20
 completion_ratio_hidden20_ci95_lower
 completion_ratio_hidden20_ci95_upper
 completion_ratio_hidden50
 completion_ratio_hidden50_ci95_lower
 completion_ratio_hidden50_ci95_upper
-completion_ratio_hidden80
-completion_ratio_hidden80_ci95_lower
-completion_ratio_hidden80_ci95_upper
+completion_coordinate_win_fraction_hidden05
+completion_coordinate_win_fraction_hidden10
 completion_coordinate_win_fraction_hidden20
 completion_coordinate_win_fraction_hidden50
-completion_coordinate_win_fraction_hidden80
 ```
 Also write:
 ```text
