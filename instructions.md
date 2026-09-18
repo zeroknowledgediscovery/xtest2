@@ -10,22 +10,7 @@ Using the supplied JARVIS `dft_3d` catalog, learn **one structural model of mate
 The same frozen fitted model must provide both geometry and generation. The model family and implementation stack are unrestricted. The defining scientific constraint is **no hyperparameter tuning**. 
 
 ## Input and required command
-Input data is provided as
-```text
-./jarvis.tgz
-```
-containing:
-```text
-jarvis_dft3d.pkl
-```
-All graded outputs must be written under:
-```text
-./analysis/
-```
-The complete workflow must run from a fresh checkout using:
-```bash
-python analysis/run_all.py --data jarvis.tgz
-```
+Input data is provided as `./jarvis.tgz`, containing `jarvis_dft3d.pkl`. All graded outputs must be written under `./analysis/`. The complete workflow must run from a fresh checkout using `python analysis/run_all.py --data jarvis.tgz`.
 ## Authoritative dataframe and fixed outer split
 Define row identity exactly as:
 ```python
