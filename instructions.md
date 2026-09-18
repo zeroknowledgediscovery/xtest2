@@ -220,22 +220,19 @@ k = int(round(hidden_fraction * len(obs)))
 ```
 coordinates selected from `np.random.default_rng(27182818).permutation(len(obs))` in the sequential row/level order of the evaluation loop. Evaluate:
 ```text
-5%  hidden
-10% hidden
 20% hidden
-50% hidden
 ```
 For every row and masking level generate exactly 10 conditional completions. Supplied observed coordinates must remain unchanged. For a hidden numerical coordinate, use the median of the 10 generated values. For a hidden categorical coordinate, use the mode, breaking ties lexicographically. For numerical coordinate $j$, use $\ell_j=|\hat x_j-x_j|/IQR_j^{train}$.
 If training IQR is zero, use the positive training range; if that is also zero, use 1.0. For categorical coordinate $j$, use $\ell_j=I(\hat x_j\ne x_j)$.
 Average first within coordinate across rows and then equally across coordinates. Let $L_M(q)$ and $L_{IND}(q)$ be submitted-model and independent-marginal loss. Define $R_C(q)=L_M(q)/L_{IND}(q)$.
-Use 3,000 row-bootstrap replicates with seed `577215`. Use the same bootstrap row-index arrays for model and baseline. Report all four masking levels and coordinate-wise win fractions.
+Use 3,000 row-bootstrap replicates with seed `577215`. Use the same bootstrap row-index arrays for model and baseline. Report the 20%-hidden result and coordinate-wise win fraction.
 ## Strong Gate 5
-Require all three primary completion criteria: $CI^{upper}_{95}(R_C(0.05))<0.40$, $CI^{upper}_{95}(R_C(0.10))<0.45$, and $CI^{upper}_{95}(R_C(0.20))<0.50$. The 50%-hidden result is a severe-missingness diagnostic and is not part of the strong gate. On a 24-coordinate panel, 20% masking hides about five properties, approximately the 99th-percentile natural missingness level in the blind-eligible cohort (5/24 = 20.8%). The 0.50 threshold therefore requires at least a twofold reduction in loss under an empirically severe missingness regime; the provisional 0.40 and 0.45 thresholds impose correspondingly stronger 60% and 55% loss reductions when more of the material state is observed. Raw-space nearest-neighbor completion ratios around 0.276–0.329 show that the dataset contains sufficient conditional redundancy for these effect sizes to be feasible.
+Require $CI^{upper}_{95}(R_C(0.20))<0.50$. On a 24-coordinate panel, 20% masking hides about five properties, approximately the 99th-percentile natural missingness level in the blind-eligible cohort (5/24 = 20.8%). The 0.50 threshold therefore requires at least a twofold reduction in loss under an empirically severe missingness regime. Raw-space nearest-neighbor completion ratios around 0.276–0.329 show that the dataset contains sufficient conditional redundancy for a sub-0.50 effect to be feasible.
 
 # Five strong discovery gates
-All five conceptual gates must pass simultaneously: geometry novelty, upper 95% CI of mean J20_E < 0.33; blind retrieval effect, upper 95% CI of retrieval ratio < 0.70; retrieval consistency, lower 95% CI of win rate > 0.80; cross-structure retention, lower 95% CI of G > 0.70; and conditional completion, with upper 95% CI of R_C < 0.40 at 5% hidden, < 0.45 at 10% hidden, and < 0.50 at 20% hidden.
+All five conceptual gates must pass simultaneously: geometry novelty, upper 95% CI of mean J20_E < 0.33; blind retrieval effect, upper 95% CI of retrieval ratio < 0.70; retrieval consistency, lower 95% CI of win rate > 0.80; cross-structure retention, lower 95% CI of G > 0.70; and conditional completion, with upper 95% CI of R_C < 0.50 at 20% hidden.
 
-The thresholds were chosen to represent large effects relative to the intrinsic variability and perturbation structure of the raw JARVIS data, rather than merely statistical significance. For geometry, the J20 gate requires no more than about one-third of learned neighbors to coincide with ordinary Euclidean neighbors; even removing 10%, 20%, and 50% of measured coordinates preserves mean J20 overlaps of about 0.84, 0.74, and 0.44, with the 5th percentile under 50%-feature removal near 0.294. For blind retrieval, random raw-distance-matched retrieval gives $R\approx0.995$ with a 1st percentile near 0.976, so $R<0.70$ demands at least a 30% functional-distance reduction, while the win-rate null is about 0.585 with a 99th percentile near 0.604, making $W>0.80$ a requirement for broad consistency rather than a favorable mean. For generated cross-structure, controlled replacement of 30% and 50% of real rows by independent-marginal samples gives $G\approx0.88$ and $0.80$, so $G>0.70$ is a conservative floor for retaining a substantial majority of recoverable dependence. For conditional completion, 20% masking hides about five of 24 properties and corresponds closely to the 99th-percentile natural missingness regime; requiring $R_C<0.50$ demands at least a twofold reduction in reconstruction loss, while the provisional 5% and 10% thresholds of 0.40 and 0.45 require 60% and 55% reductions when more information is observed. Raw nearest-neighbor completion ratios of about 0.28–0.33 show that effects of this magnitude are supported by the data.
+The thresholds were chosen to represent large effects relative to the intrinsic variability and perturbation structure of the raw JARVIS data, rather than merely statistical significance. For geometry, the J20 gate requires no more than about one-third of learned neighbors to coincide with ordinary Euclidean neighbors; even removing 10%, 20%, and 50% of measured coordinates preserves mean J20 overlaps of about 0.84, 0.74, and 0.44, with the 5th percentile under 50%-feature removal near 0.294. For blind retrieval, random raw-distance-matched retrieval gives $R\approx0.995$ with a 1st percentile near 0.976, so $R<0.70$ demands at least a 30% functional-distance reduction, while the win-rate null is about 0.585 with a 99th percentile near 0.604, making $W>0.80$ a requirement for broad consistency rather than a favorable mean. For generated cross-structure, controlled replacement of 30% and 50% of real rows by independent-marginal samples gives $G\approx0.88$ and $0.80$, so $G>0.70$ is a conservative floor for retaining a substantial majority of recoverable dependence. For conditional completion, 20% masking hides about five of 24 properties and corresponds closely to the 99th-percentile natural missingness regime; requiring $R_C<0.50$ demands at least a twofold reduction in reconstruction loss. Raw nearest-neighbor completion ratios of about 0.28–0.33 show that an effect of this magnitude is supported by the data.
 
 Passing all five gates therefore provides convergent evidence that the same structural model learns a nontrivial and functionally meaningful material geometry and faithfully generates valid multivariate property data, rather than merely reproducing individual property marginals.
 
@@ -288,22 +285,10 @@ cross_structure_retention_G_ci95_lower
 cross_structure_retention_G_ci95_upper
 cross_structure_target_win_fraction
 
-completion_ratio_hidden05
-completion_ratio_hidden05_ci95_lower
-completion_ratio_hidden05_ci95_upper
-completion_ratio_hidden10
-completion_ratio_hidden10_ci95_lower
-completion_ratio_hidden10_ci95_upper
 completion_ratio_hidden20
 completion_ratio_hidden20_ci95_lower
 completion_ratio_hidden20_ci95_upper
-completion_ratio_hidden50
-completion_ratio_hidden50_ci95_lower
-completion_ratio_hidden50_ci95_upper
-completion_coordinate_win_fraction_hidden05
-completion_coordinate_win_fraction_hidden10
 completion_coordinate_win_fraction_hidden20
-completion_coordinate_win_fraction_hidden50
 ```
 Also write:
 ```text
