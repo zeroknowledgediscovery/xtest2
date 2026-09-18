@@ -136,8 +136,8 @@ sample(M, observed coordinates, mask, seed) -> material-state sample
 ```
 Both `distance` and `sample` must consume the same frozen learned artifact bundle. Deterministic read-only transformations of that bundle are allowed. No second learned model, separately fitted parameters, or post-hoc learned mapping specialized for only geometry or only generation may be fitted after $M$ is frozen. Write `analysis/model_usage.json` identifying the artifact bundle and the code paths used by geometry and generation. Write `analysis/model_manifest.json` recording model family, fixed settings, fitting seed(s), and selected quantization resolution if applicable.
 ## Submitted geometry and conventional comparators
-The frozen model must induce one finite symmetric dissimilarity $d_G(a,b)\ge0$, with $d_G(a,a)=0$ within `1e-12` and $|d_G(a,b)-d_G(b,a)|\le10^{-10$. Construct standardized non-quantized Euclidean distance $d_E$ from eligible numerical construction variables and the 12 chemistry summaries. Estimate coordinate SDs from the 50,000 training rows only:
-$d_E(a,b)=\sqrt{\frac{1}{|O_{ab}|}\sum_{j\in O_{ab}}\left(\frac{x_{aj}-x_{bj}}{\sigma_j}\right)^2$
+The frozen model must induce one finite symmetric dissimilarity $d_G(a,b)\ge0$, with $d_G(a,a)=0$ within `1e-12` and $|d_G(a,b)-d_G(b,a)|\le10^{-10}$. Construct standardized non-quantized Euclidean distance $d_E$ from eligible numerical construction variables and the 12 chemistry summaries. Estimate coordinate SDs from the 50,000 training rows only:
+$d_E(a,b)=\sqrt{\frac{1}{|O_{ab}|}\sum_{j\in O_{ab}}\left(\frac{x_{aj}-x_{bj}}{\sigma_j}\right)^2}$
 Require at least 10 jointly observed numerical coordinates. Also compute a mixed Gower-style comparator $d_M$ including `crys`, `dimensionality`, and `spg_number` as categorical variables. Mixed-distance and rank-correlation results are diagnostics, not strong-effect gates. For all evaluation nearest-neighbor, `argmin`, and matched-control ties, break ties by smaller deduplicated dataframe position.
 ## Fixed large geometry/retrieval cohort
 During final evaluation:
@@ -165,12 +165,12 @@ Interpretation: at the upper confidence bound, no more than about one-third of l
 
 # TEST 2 — blind distant-analog retrieval
 Standardize the eight blind endpoints using means and SDs estimated from the 50,000 training rows. Define
-$d_F(a,b)=\sqrt{\frac{1}{8}\sum_{k=1}^{8}(\widetilde Y_{ak}-\widetilde Y_{bk})^2$
-Let $e_{0.90}=Q_{0.90}(d_E)$ over eligible evaluation pairs. For each anchor define $C_a=\{b:d_E(a,b)\ge e_{0.90}\$ and retrieve $b_G(a)=\arg\min_{b\in C_a}d_G(a,b)$.
+$d_F(a,b)=\sqrt{\frac{1}{8}\sum_{k=1}^{8}(\widetilde Y_{ak}-\widetilde Y_{bk})^2}$
+Let $e_{0.90}=Q_{0.90}(d_E)$ over eligible evaluation pairs. For each anchor define $C_a=\{b:d_E(a,b)\ge e_{0.90}\}$ and retrieve $b_G(a)=\arg\min_{b\in C_a}d_G(a,b)$.
 Select 20 distinct controls from $C_a$, excluding $b_G(a)$, whose $d_E$ values are closest to the retrieved pair's $d_E$. Define
-Define $R_{retrieval}=\frac{\mathrm{mean}_a d_F(a,b_G(a))}{\mathrm{mean}_a\mathrm{mean}_{c\in C_a^{match}} d_F(a,c)$ and $W=\frac{1}{A}\sum_a I[d_F(a,b_G(a))<\mathrm{mean}_{c\in C_a^{match}} d_F(a,c)]$. Use 3,000 anchor-bootstrap replicates with seed `101004`.
+Define $R_{retrieval}=\frac{\text{mean anchor retrieved } d_F}{\text{mean anchor matched-control } d_F}$ and $W=\frac{1}{A}\sum_a I[d_F(a,b_G(a))<\mathrm{mean}_{c\in C_a^{match}} d_F(a,c)]$. Use 3,000 anchor-bootstrap replicates with seed `101004`.
 ### Raw-distance matching validity
-Define $G_{match}=\frac{\mathrm{mean}_a\frac{1}{20}\sum_{c\in C_a^{match}}|d_E(a,c)-d_E(a,b_G(a))|}{e_{0.90}$.
+Define $G_{match}=\frac{\text{mean matched-control raw-distance gap}}{e_{0.90}}$.
 Use 3,000 anchor-bootstrap replicates with seed `101005`. Require both $G_{match}\le0.10$ and $CI^{upper}_{95}(G_{match})<0.10$.
 ### Strong Gate 2
 Require $CI^{upper}_{95}(R_{retrieval})<0.70$.
@@ -219,8 +219,8 @@ REAL: real training materials
 GEN:  submitted generated materials
 IND:  independent-marginal materials
 ```
-Evaluate all three on the same real outer-held-out rows eligible for that target. For numerical targets use $L_j=MAE_j/IQR_j^{train$; for categorical targets use $L_j=1-accuracy_j$.
-A target is informative iff $L_j^{REAL}\le0.95L_j^{IND$.
+Evaluate all three on the same real outer-held-out rows eligible for that target. For numerical targets use $L_j=MAE_j/IQR_j^{train}$; for categorical targets use $L_j=1-accuracy_j$.
+A target is informative iff $L_j^{REAL}\le0.95L_j^{IND}$.
 For each informative target define $g_j=(L_j^{IND}-L_j^{GEN})/(L_j^{IND}-L_j^{REAL})$, without clipping, and $G=|J|^{-1}\sum_{j\in J}g_j$.
 Bootstrap outer-held-out verifier rows 2,000 times with seed `424242`, without refitting verifier models.
 ## Strong Gate 4
@@ -238,7 +238,7 @@ coordinates selected from `np.random.default_rng(27182818).permutation(len(obs))
 20% hidden
 50% hidden
 ```
-For every row and masking level generate exactly 10 conditional completions. Supplied observed coordinates must remain unchanged. For a hidden numerical coordinate, use the median of the 10 generated values. For a hidden categorical coordinate, use the mode, breaking ties lexicographically. For numerical coordinate $j$, use $\ell_j=|\hat x_j-x_j|/IQR_j^{train$.
+For every row and masking level generate exactly 10 conditional completions. Supplied observed coordinates must remain unchanged. For a hidden numerical coordinate, use the median of the 10 generated values. For a hidden categorical coordinate, use the mode, breaking ties lexicographically. For numerical coordinate $j$, use $\ell_j=|\hat x_j-x_j|/IQR_j^{train}$.
 If training IQR is zero, use the positive training range; if that is also zero, use 1.0. For categorical coordinate $j$, use $\ell_j=I(\hat x_j\ne x_j)$.
 Average first within coordinate across rows and then equally across coordinates. Let $L_M(q)$ and $L_{IND}(q)$ be submitted-model and independent-marginal loss. Define $R_C(q)=L_M(q)/L_{IND}(q)$.
 Use 3,000 row-bootstrap replicates with seed `577215`. Use the same bootstrap row-index arrays for model and baseline. Report all four masking levels and coordinate-wise win fractions.
