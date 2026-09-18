@@ -6,12 +6,12 @@ Using the supplied JARVIS `dft_3d` catalog, learn **one structural model of mate
 
 1. induces a material geometry substantially different from ordinary physicochemical proximity;
 2. retrieves blind functional analogs from regions that ordinary non-quantized distance regards as far apart;
-3. generates complete material-state vectors from an empty state; and
+3. generates distinct complete material-state vectors from an empty state ie no properties specified which must be validated in an objective sense to be physically probabale (not just marginals but the entire vector of values of the physical properties); and
 4. conditionally reconstructs hidden material properties from partial observations.
 
 The same frozen fitted model must provide both geometry and generation. The model family and implementation stack are unrestricted.
 
-The defining scientific constraint is **no hyperparameter tuning**. Only quantization/discretization resolution may be selected comparatively, if quantization is used.
+The defining scientific constraint is **no hyperparameter tuning**. 
 
 ---
 
