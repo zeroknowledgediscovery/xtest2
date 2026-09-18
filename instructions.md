@@ -7,7 +7,9 @@ Using the supplied JARVIS `dft_3d` catalog, learn **one structural model of mate
 3. generates distinct complete material-state vectors from an empty state (no properties specified), whose multivariate physical coherence—not merely marginal fidelity—is objectively validated; and
 4. conditionally reconstructs hidden material properties from partial observations.
 
-The same frozen fitted model must provide both geometry and generation. The model family and implementation stack are unrestricted. The defining scientific constraint is **no hyperparameter tuning**. 
+The goal is to test whether a single structural model can uncover a nontrivial organization of material property space that is simultaneously useful for similarity, blind functional retrieval, unconditional generation, and conditional completion. This is scientifically interesting because success would imply that the model has recovered a coherent dependency structure among material properties rather than merely fitting individual endpoints or reproducing marginal distributions.
+
+The same frozen fitted model must provide both geometry and generation. The model family and implementation stack are unrestricted. The defining scientific constraint is **no hyperparameter tuning**: in a high-dimensional materials dataset, broad search over model families, geometries, latent dimensions, regularizers, or sampling settings can produce apparently meaningful structure by chance through model selection. Requiring one prespecified configuration makes passing the gates evidence for the model's inductive structure rather than for successful search over many alternatives.
 
 ## Input and required command
 Input data is provided as `./jarvis.tgz`, containing `jarvis_dft3d.pkl`. All graded outputs must be written under `./analysis/`. The complete workflow must run from a fresh checkout using `python analysis/run_all.py --data jarvis.tgz`.
