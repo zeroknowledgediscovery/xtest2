@@ -1,4 +1,4 @@
-# Discover a Generative Materials Geometry with Blind Functional Utility — No Hyperparameter Tuning
+# Discover a Generative Materials Geometry with Blind Functional Utility with No Hyperparameter Tuning
 
 ## Scientific task
 
@@ -11,7 +11,7 @@ Using the supplied JARVIS `dft_3d` catalog, learn **one structural model of mate
 
 The same frozen fitted model must provide both geometry and generation. The model family and implementation stack are unrestricted.
 
-The defining scientific constraint is **no broad hyperparameter tuning**. Only quantization/discretization resolution may be selected comparatively, if quantization is used.
+The defining scientific constraint is **no hyperparameter tuning**. Only quantization/discretization resolution may be selected comparatively, if quantization is used.
 
 ---
 
