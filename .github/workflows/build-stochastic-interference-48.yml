@@ -1,0 +1,51 @@
+name: Build stochastic-interference-48 example
+
+on:
+  push:
+    branches:
+      - stochastic-interference-48-honeydew
+    paths:
+      - ".github/workflows/build-stochastic-interference-48.yml"
+      - "stochastic_interference_48/private/construct.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: stochastic-interference-48-honeydew
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deterministic generator dependencies
+        run: python -m pip install numpy==2.3.5 scipy==1.17.0 numba==0.65.1
+      - name: Generate all 166 binary recordings and metadata
+        run: python stochastic_interference_48/private/construct.py
+      - name: Validate hidden algebraic relation and observations
+        run: python stochastic_interference_48/private/validate.py
+      - name: Check reference solver and independent halves
+        run: |
+          python stochastic_interference_48/private/recover.py 7
+          python stochastic_interference_48/private/recover.py 7 first
+          python stochastic_interference_48/private/recover.py 7 second
+      - name: Check Honeydew reference and verifier
+        run: |
+          mkdir -p stochastic_interference_48/task/environment/output
+          cp stochastic_interference_48/task/solution/solve.py stochastic_interference_48/task/environment/output/solution.py
+          WORKSPACE_DIR="$GITHUB_WORKSPACE/stochastic_interference_48/task/environment" TESTS_DIR="$GITHUB_WORKSPACE/stochastic_interference_48/task/tests" python stochastic_interference_48/task/tests/test_outputs.py
+      - name: Commit generated recordings to challenge branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f stochastic_interference_48/task/environment/data/
+          git add -f stochastic_interference_48/private/truth.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Generate and validate 48-module stochastic recordings [skip ci]"
+            git push origin HEAD:stochastic-interference-48-honeydew
+          fi
