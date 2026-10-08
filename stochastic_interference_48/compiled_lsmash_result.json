@@ -1,0 +1,14 @@
+{
+  "algorithm": "compiled_lsmash",
+  "n": 130000,
+  "correct": 24,
+  "exact": false,
+  "smallest_singular_values": [
+    3.381280502011234e-05,
+    3.094376781466007e-05,
+    2.7201600413584396e-05
+  ],
+  "distance_min": 0.0,
+  "distance_max": 0.00737057975884764,
+  "elapsed_seconds": 4.12
+}
