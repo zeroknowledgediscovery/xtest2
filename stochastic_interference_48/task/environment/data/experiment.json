@@ -1,0 +1,15 @@
+{
+  "n_modules": 48,
+  "excitation_strength": 0.65,
+  "streams_per_module": [
+    "plus",
+    "minus"
+  ],
+  "n_probes": 64,
+  "n_calibrations": 6,
+  "alphabet": [
+    0,
+    1
+  ],
+  "purpose": "Recover normalized signs of the maximum-entropy unit-strength joint experiment."
+}
