@@ -1,0 +1,48 @@
+schema_version = "1.1"
+artifacts = [
+  "/workspace/output/solution.py",
+  "/workspace/output/solution.json",
+  "/workspace/output/analysis.md",
+]
+
+[task]
+name = "stochastic-processes/stochastic-balance"
+description = "Infer the unique maximum-entropy polarity configuration from stochastic experimental streams."
+
+[metadata]
+author_name = "Ishanu Chattopadhyay"
+author_organization = "University of Kentucky"
+category = "statistical-inference"
+tags = ["stochastic-processes", "entropy-rate", "system-identification", "inverse-problems", "scientific-discovery"]
+expert_time_estimate_hours = 8.0
+
+difficulty_explanation = """
+An apparently exponential polarity search can be reduced by finding a hidden
+conservation law in the process dynamics. All source emissions have balanced
+lower-order statistics, hiding the signal in higher-order temporal dependence.
+The coupling mechanism is supplied only through calibration experiments.
+"""
+solution_explanation = """
+The planted generator law is a hidden signed relation among finite-memory
+stochastic sources. A private reference method uses conditional sequence-likelihood
+probe divergences and a finite-difference nullspace to recover the polarities.
+This is an experimental surrogate for LSmash, not its compiled distance metric.
+"""
+verification_explanation = """
+The unique planted sign configuration is established from the private, exact
+transition laws (rank 47) and checked by a private fixture. The scientific
+solver reproduces the exact 48 signs from all recordings and independent halves.
+"""
+
+[verifier]
+timeout_sec = 180
+
+[agent]
+timeout_sec = 3600
+
+[environment]
+build_timeout_sec = 1200
+network_mode = "public"
+cpus = 2
+memory_mb = 4096
+storage_mb = 4096
